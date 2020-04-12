@@ -2,17 +2,48 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main__cl_activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightTheme"
+    android:padding="@dimen/default_padding"
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/activity_main__tv_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/city"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/title_text_size"
+        app:layout_constraintBottom_toTopOf="@id/activity_main__tv_temperature_value"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/activity_main__tv_temperature_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/temperature_value"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_city" />
+
+    <Switch
+        android:id="@+id/activity_main__sw_dark_theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"
+        android:text="@string/dark_theme"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
