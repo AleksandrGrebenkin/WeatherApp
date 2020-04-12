@@ -9,6 +9,37 @@
     android:padding="@dimen/default_padding"
     tools:context=".MainActivity">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/activity_main__gl_current_info"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.35" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/activity_main__grp_wind"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="activity_main__tv_wind_value,activity_main__tv_wind_measure" />
+
+    <ImageButton
+        android:id="@+id/activity_main__ib_cities"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/baseline_list_black_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/cities_content_description" />
+
+    <ImageButton
+        android:id="@+id/activity_main__ib_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/baseline_settings_black_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/settings_content_description" />
+
     <TextView
         android:id="@+id/activity_main__tv_city"
         android:layout_width="wrap_content"
@@ -17,8 +48,8 @@
         android:textColor="@color/darkTheme"
         android:textSize="@dimen/title_text_size"
         app:layout_constraintBottom_toTopOf="@id/activity_main__tv_temperature_value"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/activity_main__ib_settings"
+        app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -29,21 +60,72 @@
         android:text="@string/temperature_value"
         android:textColor="@color/darkTheme"
         android:textSize="@dimen/subtitle_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/activity_main__tv_wind_value"
+        app:layout_constraintEnd_toStartOf="@id/activity_main__tv_temperature_measure"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
         app:layout_constraintTop_toBottomOf="@id/activity_main__tv_city" />
 
-    <Switch
-        android:id="@+id/activity_main__sw_dark_theme"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/activity_main__tv_temperature_measure"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="end|center_vertical"
-        android:text="@string/dark_theme"
+        android:layout_marginStart="@dimen/measure_margin"
+        android:text="@string/celsius"
         android:textColor="@color/darkTheme"
-        android:textSize="@dimen/default_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBaseline_toBaselineOf="@id/activity_main__tv_temperature_value"
+        app:layout_constraintEnd_toStartOf="@id/activity_main__ib_settings"
+        app:layout_constraintStart_toEndOf="@id/activity_main__tv_temperature_value" />
+
+    <TextView
+        android:id="@+id/activity_main__tv_wind_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wind_value"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBottom_toTopOf="@id/activity_main__tv_pressure_value"
+        app:layout_constraintEnd_toStartOf="@id/activity_main__tv_wind_measure"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_temperature_value" />
+
+    <TextView
+        android:id="@+id/activity_main__tv_wind_measure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/measure_margin"
+        android:text="@string/meter_per_second"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBaseline_toBaselineOf="@id/activity_main__tv_wind_value"
+        app:layout_constraintEnd_toStartOf="@id/activity_main__ib_settings"
+        app:layout_constraintStart_toEndOf="@id/activity_main__tv_wind_value" />
+
+    <TextView
+        android:id="@+id/activity_main__tv_pressure_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pressure_value"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/activity_main__gl_current_info"
+        app:layout_constraintEnd_toStartOf="@id/activity_main__tv_pressure_measure"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_wind_value" />
+
+    <TextView
+        android:id="@+id/activity_main__tv_pressure_measure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/measure_margin"
+        android:text="@string/mm_of_mercury"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBaseline_toBaselineOf="@id/activity_main__tv_pressure_value"
+        app:layout_constraintEnd_toStartOf="@id/activity_main__ib_settings"
+        app:layout_constraintStart_toEndOf="@id/activity_main__tv_pressure_value" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

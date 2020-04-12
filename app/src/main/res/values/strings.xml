@@ -1,6 +1,29 @@
 <resources>
     <string name="app_name">Weather App</string>
+
+<!--    Main-->
     <string name="city">City</string>
     <string name="temperature_value">+10</string>
+    <string name="celsius">℃</string>
+    <string name="fahrenheit">℉</string>
+    <string name="meter_per_second">m/s</string>
+    <string name="wind_value">5</string>
+    <string name="pressure_value">800</string>
+    <string name="mm_of_mercury">mmHg</string>
+    <string name="cities_content_description">Cities list</string>
+    <string name="settings_content_description">Settings</string>
+
+<!--    Cities-->
+    <string name="cities">Cities</string>
+    <string name="enter_city_name">Enter city name</string>
+    <string name="find">Find</string>
+    <string name="moscow">Moscow</string>
+    <string name="berlin">Berlin</string>
+    <string name="paris">Paris</string>
+
+<!--    Settings-->
+    <string name="settings">Settings</string>
     <string name="dark_theme">Dark theme</string>
+    <string name="pressure">Pressure</string>
+    <string name="wind">Wind</string>
 </resources>

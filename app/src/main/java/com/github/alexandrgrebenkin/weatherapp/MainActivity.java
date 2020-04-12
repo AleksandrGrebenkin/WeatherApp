@@ -1,20 +1,21 @@
 package com.github.alexandrgrebenkin.weatherapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
-    private ConstraintLayout activityMain;
+public class MainActivity extends Activity {
 
     private TextView city;
     private TextView temperatureValue;
+    private TextView windValue;
+    private TextView pressureValue;
 
-    private Switch darkTheme;
+    private ImageButton cities;
+    private ImageButton settings;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,40 +23,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initialize();
-        initDarkThemeSwitchListener();
+        startCitiesClickListener();
+        startSettingsClickListener();
+
     }
 
     private void initialize() {
-        activityMain = findViewById(R.id.activity_main__cl_activity_main);
         city = findViewById(R.id.activity_main__tv_city);
         temperatureValue = findViewById(R.id.activity_main__tv_temperature_value);
-        darkTheme = findViewById(R.id.activity_main__sw_dark_theme);
+        windValue = findViewById(R.id.activity_main__tv_wind_value);
+        pressureValue = findViewById(R.id.activity_main__tv_pressure_value);
+        cities = findViewById(R.id.activity_main__ib_cities);
+        settings = findViewById(R.id.activity_main__ib_settings);
     }
 
-    private void initDarkThemeSwitchListener() {
-        darkTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    setDarkTheme();
-                } else {
-                    setLightTheme();
-                }
-            }
+    private void startCitiesClickListener() {
+        cities.setOnClickListener((v) -> {
+            Intent intent = new Intent(this, CitiesActivity.class);
+            startActivity(intent);
         });
     }
 
-    private void setDarkTheme() {
-        activityMain.setBackgroundColor(getResources().getColor(R.color.darkTheme));
-        city.setTextColor(getResources().getColor(R.color.lightTheme));
-        temperatureValue.setTextColor(getResources().getColor(R.color.lightTheme));
-        darkTheme.setTextColor(getResources().getColor(R.color.lightTheme));
+    private void startSettingsClickListener() {
+        settings.setOnClickListener((v) -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        });
     }
 
-    private void setLightTheme() {
-        activityMain.setBackgroundColor(getResources().getColor(R.color.lightTheme));
-        city.setTextColor(getResources().getColor(R.color.darkTheme));
-        temperatureValue.setTextColor(getResources().getColor(R.color.darkTheme));
-        darkTheme.setTextColor(getResources().getColor(R.color.darkTheme));
-    }
 }

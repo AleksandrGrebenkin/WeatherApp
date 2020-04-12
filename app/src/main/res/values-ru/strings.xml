@@ -1,6 +1,29 @@
 <resources>
     <string name="app_name">Погода</string>
+
+<!--    Main-->
     <string name="city">Город</string>
     <string name="temperature_value">+10</string>
+    <string name="celsius">℃</string>
+    <string name="fahrenheit">℉</string>
+    <string name="meter_per_second">м/с</string>
+    <string name="wind_value">5</string>
+    <string name="pressure_value">800</string>
+    <string name="mm_of_mercury">мм рт. ст.</string>
+    <string name="cities_content_description">Список городов</string>
+    <string name="settings_content_description">Настройки</string>
+
+<!--    Cities-->
+    <string name="cities">Города</string>
+    <string name="enter_city_name">Введите наименование города</string>
+    <string name="find">Найти</string>
+    <string name="moscow">Москва</string>
+    <string name="berlin">Берлин</string>
+    <string name="paris">Париж</string>
+
+<!--    Settings-->
+    <string name="settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
+    <string name="pressure">Давление</string>
+    <string name="wind">Ветер</string>
 </resources>
