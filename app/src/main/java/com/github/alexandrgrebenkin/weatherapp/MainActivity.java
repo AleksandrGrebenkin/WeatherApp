@@ -9,12 +9,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    ConstraintLayout activityMain;
+    private ConstraintLayout activityMain;
 
-    TextView city;
-    TextView temperatureValue;
+    private TextView city;
+    private TextView temperatureValue;
 
-    Switch darkTheme;
+    private Switch darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
