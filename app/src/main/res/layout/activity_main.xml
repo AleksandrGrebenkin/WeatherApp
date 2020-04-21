@@ -14,7 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.35" />
+        app:layout_constraintGuide_percent="0.5" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/activity_main__grp_wind"
@@ -127,5 +127,17 @@
         app:layout_constraintBaseline_toBaselineOf="@id/activity_main__tv_pressure_value"
         app:layout_constraintEnd_toStartOf="@id/activity_main__ib_settings"
         app:layout_constraintStart_toEndOf="@id/activity_main__tv_pressure_value" />
+
+    <Button
+        android:id="@+id/activity_main__btn_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Refresh"
+        android:textSize="@dimen/default_text_size"
+        android:textColor="@color/darkTheme"
+        app:layout_constraintTop_toTopOf="@id/activity_main__gl_current_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
