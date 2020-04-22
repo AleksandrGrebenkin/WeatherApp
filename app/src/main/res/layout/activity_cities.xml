@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/default_padding"
-    tools:context=".CitiesActivity">
+    tools:context=".Interface.CitiesActivity">
 
     <TextView
         android:id="@+id/activity_cities__tv_title"

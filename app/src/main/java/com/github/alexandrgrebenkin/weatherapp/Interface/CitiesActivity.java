@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp;
+package com.github.alexandrgrebenkin.weatherapp.Interface;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfoProvider;
+import com.github.alexandrgrebenkin.weatherapp.R;
 
 public class CitiesActivity extends Activity implements Constants{
 
@@ -42,9 +46,10 @@ public class CitiesActivity extends Activity implements Constants{
     }
 
     private void pushCityInfoIntentResult(TextView textView) {
+        WeatherInfoProvider weatherInfoProvider = new WeatherInfoProvider();
+        WeatherInfo weatherInfo = weatherInfoProvider.getWeatherInfo(textView.getText().toString());
         Intent intentResult = new Intent();
-        String cityNameString = textView.getText().toString();
-        intentResult.putExtra(CITY, cityNameString);
+        intentResult.putExtra(WEATHER_INFO, weatherInfo);
         setResult(RESULT_OK, intentResult);
         finish();
     }

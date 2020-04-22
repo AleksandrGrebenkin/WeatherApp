@@ -1,14 +1,17 @@
-package com.github.alexandrgrebenkin.weatherapp;
+package com.github.alexandrgrebenkin.weatherapp.Interface;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
+import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfoProvider;
+import com.github.alexandrgrebenkin.weatherapp.R;
 
 public class MainActivity extends Activity implements Constants {
 
@@ -22,24 +25,18 @@ public class MainActivity extends Activity implements Constants {
     private ImageButton cities;
     private ImageButton settings;
 
-    private Button refresh;
+    private WeatherInfo weatherInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null){
-
-        } else {
-
-        }
-
         initialize();
         startCitiesClickListener();
         startSettingsClickListener();
-        startRefreshClickListener();
         startCityClickListener();
+        updateWeather();
     }
 
     private void initialize() {
@@ -49,7 +46,6 @@ public class MainActivity extends Activity implements Constants {
         pressureValue = findViewById(R.id.activity_main__tv_pressure_value);
         cities = findViewById(R.id.activity_main__ib_cities);
         settings = findViewById(R.id.activity_main__ib_settings);
-        refresh = findViewById(R.id.activity_main__btn_refresh);
     }
 
     private void startCitiesClickListener() {
@@ -78,43 +74,36 @@ public class MainActivity extends Activity implements Constants {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CITY_CODE_ACTIVITY && resultCode == RESULT_OK) {
-            city.setText(data.getStringExtra(CITY));
+            weatherInfo = data.getParcelableExtra(WEATHER_INFO);
+            updateViewData();
         }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /*
-    * Временная мера для генерации данных
-    * */
-    private void startRefreshClickListener() {
-        refresh.setOnClickListener((v) -> {
-            String temperature = Integer.valueOf((int) (Math.random()*60-30)).toString();
-            String wind = Integer.valueOf((int) (Math.random()*30)).toString();
-            String pressure = Integer.valueOf((int) (Math.random()*100+700)).toString();
-            temperatureValue.setText(temperature);
-            windValue.setText(wind);
-            pressureValue.setText(pressure);
-        });
+    private void updateWeather() {
+        WeatherInfoProvider weatherInfoProvider = new WeatherInfoProvider();
+        weatherInfo = weatherInfoProvider.getWeatherInfo(city.getText().toString());
+        updateViewData();
+    }
+
+    private void updateViewData() {
+        city.setText(weatherInfo.getCityName());
+        temperatureValue.setText(weatherInfo.getTemperatureValue());
+        windValue.setText(weatherInfo.getWindValue());
+        pressureValue.setText(weatherInfo.getPressureValue());
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        city.setText(savedInstanceState.getString(CITY));
-        temperatureValue.setText(savedInstanceState.getString(TEMPERATURE));
-        windValue.setText(savedInstanceState.getString(WIND));
-        pressureValue.setText(savedInstanceState.getString(PRESSURE));
+        weatherInfo = savedInstanceState.getParcelable(WEATHER_INFO);
+        updateViewData();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(CITY, city.getText().toString());
-        outState.putString(TEMPERATURE, temperatureValue.getText().toString());
-        outState.putString(WIND, windValue.getText().toString());
-        outState.putString(PRESSURE, pressureValue.getText().toString());
+        outState.putParcelable(WEATHER_INFO, weatherInfo);
     }
-
-
 }
