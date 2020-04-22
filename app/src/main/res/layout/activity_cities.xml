@@ -11,22 +11,22 @@
         android:id="@+id/activity_cities__tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/title_text_size"
         android:text="@string/cities"
         android:textColor="@color/darkTheme"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="@dimen/title_text_size"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/action_cities__et_city_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
         android:hint="@string/enter_city_name"
+        android:inputType="text"
         android:textColor="@color/darkTheme"
         android:textSize="@dimen/default_text_size"
-        android:layout_marginTop="@dimen/default_margin"
         app:layout_constraintEnd_toStartOf="@id/action_cities_btn_city_find"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,9 +63,9 @@
         android:layout_marginTop="@dimen/default_margin"
         android:text="@string/berlin"
         android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toTopOf="@id/activity_cities__tv_paris"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/activity_cities__tv_paris"
         app:layout_constraintTop_toBottomOf="@id/activity_cities__tv_moscow" />
 
     <TextView

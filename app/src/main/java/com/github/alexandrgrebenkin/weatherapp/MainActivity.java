@@ -2,6 +2,7 @@ package com.github.alexandrgrebenkin.weatherapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -9,7 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements Constants {
+
+    private final static int REQUEST_CITY_CODE_ACTIVITY = 1;
 
     private TextView city;
     private TextView temperatureValue;
@@ -20,12 +23,6 @@ public class MainActivity extends Activity {
     private ImageButton settings;
 
     private Button refresh;
-
-    private final String CITY = "CITY";
-    private final String TEMPERATURE = "TEMPERATURE";
-    private final String WIND = "WIND";
-    private final String PRESSURE = "PRESSURE";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +39,7 @@ public class MainActivity extends Activity {
         startCitiesClickListener();
         startSettingsClickListener();
         startRefreshClickListener();
+        startCityClickListener();
     }
 
     private void initialize() {
@@ -56,16 +54,34 @@ public class MainActivity extends Activity {
 
     private void startCitiesClickListener() {
         cities.setOnClickListener((v) -> {
-            Intent intent = new Intent(this, CitiesActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent(getApplicationContext(), CitiesActivity.class);
+            startActivityForResult(intent, REQUEST_CITY_CODE_ACTIVITY);
         });
     }
 
     private void startSettingsClickListener() {
         settings.setOnClickListener((v) -> {
-            Intent intent = new Intent(this, SettingsActivity.class);
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
         });
+    }
+
+    private void startCityClickListener() {
+        city.setOnClickListener((v) -> {
+            String url = "https://yandex.ru/search/?text=" + city.getText().toString();
+            Uri uri = Uri.parse(url);
+            Intent browser = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(browser);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CITY_CODE_ACTIVITY && resultCode == RESULT_OK) {
+            city.setText(data.getStringExtra(CITY));
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /*
