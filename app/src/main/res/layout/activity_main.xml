@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/lightTheme"
     android:padding="@dimen/default_padding"
-    tools:context=".MainActivity">
+    tools:context=".Interface.MainActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/activity_main__gl_current_info"
@@ -27,18 +27,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/baseline_list_black_24dp"
+        android:contentDescription="@string/cities_content_description"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/cities_content_description" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/activity_main__ib_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/baseline_settings_black_24dp"
+        android:contentDescription="@string/settings_content_description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/settings_content_description" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/activity_main__tv_city"
@@ -57,14 +57,14 @@
         android:id="@+id/activity_main__tv_temperature_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/temperature_value"
         android:textColor="@color/darkTheme"
         android:textSize="@dimen/subtitle_text_size"
         app:layout_constraintBottom_toTopOf="@id/activity_main__tv_wind_value"
         app:layout_constraintEnd_toStartOf="@id/activity_main__tv_temperature_measure"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
-        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_city" />
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_city"
+        tools:text="@string/temperature_value" />
 
     <TextView
         android:id="@+id/activity_main__tv_temperature_measure"
@@ -82,14 +82,14 @@
         android:id="@+id/activity_main__tv_wind_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/wind_value"
         android:textColor="@color/darkTheme"
         android:textSize="@dimen/subtitle_text_size"
         app:layout_constraintBottom_toTopOf="@id/activity_main__tv_pressure_value"
         app:layout_constraintEnd_toStartOf="@id/activity_main__tv_wind_measure"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
-        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_temperature_value" />
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_temperature_value"
+        tools:text="@string/wind_value" />
 
     <TextView
         android:id="@+id/activity_main__tv_wind_measure"
@@ -107,14 +107,14 @@
         android:id="@+id/activity_main__tv_pressure_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/pressure_value"
         android:textColor="@color/darkTheme"
         android:textSize="@dimen/subtitle_text_size"
         app:layout_constraintBottom_toBottomOf="@id/activity_main__gl_current_info"
         app:layout_constraintEnd_toStartOf="@id/activity_main__tv_pressure_measure"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
-        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_wind_value" />
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_wind_value"
+        tools:text="@string/pressure_value" />
 
     <TextView
         android:id="@+id/activity_main__tv_pressure_measure"
@@ -127,17 +127,5 @@
         app:layout_constraintBaseline_toBaselineOf="@id/activity_main__tv_pressure_value"
         app:layout_constraintEnd_toStartOf="@id/activity_main__ib_settings"
         app:layout_constraintStart_toEndOf="@id/activity_main__tv_pressure_value" />
-
-    <Button
-        android:id="@+id/activity_main__btn_refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Refresh"
-        android:textSize="@dimen/default_text_size"
-        android:textColor="@color/darkTheme"
-        app:layout_constraintTop_toTopOf="@id/activity_main__gl_current_info"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
