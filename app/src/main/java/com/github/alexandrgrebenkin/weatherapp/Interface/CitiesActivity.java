@@ -1,17 +1,18 @@
 package com.github.alexandrgrebenkin.weatherapp.Interface;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfo;
 import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfoProvider;
 import com.github.alexandrgrebenkin.weatherapp.R;
 
-public class CitiesActivity extends Activity implements Constants{
+public class CitiesActivity extends AppCompatActivity implements Constants{
 
     private EditText cityName;
 

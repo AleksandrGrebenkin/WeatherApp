@@ -1,14 +1,12 @@
 package com.github.alexandrgrebenkin.weatherapp.Interface;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Switch;
 
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.alexandrgrebenkin.weatherapp.R;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
