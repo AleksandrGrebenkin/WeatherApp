@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/default_padding"
+    tools:context=".Interface.CitiesListFragment">
+
+    <TextView
+        android:id="@+id/fragment_cities_list__tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cities"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/title_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/fragment_cities_list__et_city_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        android:hint="@string/enter_city_name"
+        android:inputType="text"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintEnd_toStartOf="@id/fragment_cities_list_btn_city_find"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_cities_list__tv_title" />
+
+    <Button
+        android:id="@+id/fragment_cities_list_btn_city_find"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/find"
+        android:textAllCaps="false"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBaseline_toBaselineOf="@id/fragment_cities_list__et_city_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fragment_cities_list__et_city_name" />
+
+    <ListView
+        android:id="@+id/fragment_cities_list__lv_cities"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/default_margin"
+        android:entries="@array/cities"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_cities_list__et_city_name" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

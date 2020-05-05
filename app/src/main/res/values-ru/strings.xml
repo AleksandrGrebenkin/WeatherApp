@@ -15,11 +15,13 @@
 
 <!--    Cities-->
     <string name="cities">Города</string>
-    <string name="enter_city_name">Введите наименование города</string>
+    <string name="enter_city_name">Введите город</string>
     <string name="find">Найти</string>
-    <string name="moscow">Москва</string>
-    <string name="berlin">Берлин</string>
-    <string name="paris">Париж</string>
+    <string-array name="cities">
+        <item>Москва</item>
+        <item>Берлин</item>
+        <item>Париж</item>
+    </string-array>
 
 <!--    Settings-->
     <string name="settings">Настройки</string>

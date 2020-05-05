@@ -2,71 +2,25 @@ package com.github.alexandrgrebenkin.weatherapp.Interface;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfoProvider;
 import com.github.alexandrgrebenkin.weatherapp.R;
 
-public class CitiesActivity extends AppCompatActivity implements Constants{
-
-    private EditText cityName;
-
-    private Button cityFind;
-
-    private TextView moscow;
-    private TextView berlin;
-    private TextView paris;
-
+public class CitiesActivity extends AppCompatActivity implements CitiesListFragment.Listener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cities);
-        initialize();
-        startCityFindClickListener();
-        startFavoriteCityListListener();
     }
 
-    private void initialize() {
-        cityName = findViewById(R.id.action_cities__et_city_name);
-        cityFind = findViewById(R.id.action_cities_btn_city_find);
-        moscow = findViewById(R.id.activity_cities__tv_moscow);
-        berlin = findViewById(R.id.activity_cities__tv_berlin);
-        paris = findViewById(R.id.activity_cities__tv_paris);
-    }
-
-    private void startCityFindClickListener() {
-        cityFind.setOnClickListener((v) -> {
-            pushCityInfoIntentResult(cityName);
-        });
-    }
-
-    private void pushCityInfoIntentResult(TextView textView) {
-        WeatherInfoProvider weatherInfoProvider = new WeatherInfoProvider();
-        WeatherInfo weatherInfo = weatherInfoProvider.getWeatherInfo(textView.getText().toString());
+    @Override
+    public void pushWeatherInfo(WeatherInfo weatherInfo) {
         Intent intentResult = new Intent();
-        intentResult.putExtra(WEATHER_INFO, weatherInfo);
+        intentResult.putExtra(WeatherInfoFragment.WEATHER_INFO, weatherInfo);
         setResult(RESULT_OK, intentResult);
         finish();
-    }
-
-    /*
-    * Временное решение для обработки избранных городов.
-    * */
-    private void startFavoriteCityListListener() {
-        moscow.setOnClickListener((v) -> {
-            pushCityInfoIntentResult(moscow);
-        });
-        berlin.setOnClickListener((v) -> {
-            pushCityInfoIntentResult(berlin);
-        });
-        paris.setOnClickListener((v) -> {
-            pushCityInfoIntentResult(paris);
-        });
     }
 }

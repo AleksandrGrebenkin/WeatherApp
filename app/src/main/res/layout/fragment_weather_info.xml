@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightTheme"
+    android:padding="@dimen/default_padding"
+    tools:context=".Interface.WeatherInfoFragment">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/fragment_weather_info__gl_current_info"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/fragment_weather_info__grp_wind"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="fragment_weather_info__tv_wind_value,fragment_weather_info__tv_wind_measure" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/fragment_weather_info__grp_pressure"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="fragment_weather_info__tv_pressure_value,fragment_weather_info__tv_pressure_measure" />
+
+    <ImageButton
+        android:id="@+id/fragment_weather_info__ib_cities"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/baseline_list_black_24dp"
+        android:contentDescription="@string/cities_content_description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/fragment_weather_info__ib_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/baseline_settings_black_24dp"
+        android:contentDescription="@string/settings_content_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/fragment_weather_info__tv_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/city"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/title_text_size"
+        app:layout_constraintBottom_toTopOf="@id/fragment_weather_info__tv_temperature_value"
+        app:layout_constraintEnd_toStartOf="@id/fragment_weather_info__ib_settings"
+        app:layout_constraintStart_toEndOf="@id/fragment_weather_info__ib_cities"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/fragment_weather_info__tv_temperature_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBottom_toTopOf="@id/fragment_weather_info__tv_wind_value"
+        app:layout_constraintEnd_toStartOf="@id/fragment_weather_info__tv_temperature_measure"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/fragment_weather_info__ib_cities"
+        app:layout_constraintTop_toBottomOf="@id/fragment_weather_info__tv_city"
+        tools:text="@string/temperature_value" />
+
+    <TextView
+        android:id="@+id/fragment_weather_info__tv_temperature_measure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/measure_margin"
+        android:text="@string/celsius"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBaseline_toBaselineOf="@id/fragment_weather_info__tv_temperature_value"
+        app:layout_constraintEnd_toStartOf="@id/fragment_weather_info__ib_settings"
+        app:layout_constraintStart_toEndOf="@id/fragment_weather_info__tv_temperature_value" />
+
+    <TextView
+        android:id="@+id/fragment_weather_info__tv_wind_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBottom_toTopOf="@id/fragment_weather_info__tv_pressure_value"
+        app:layout_constraintEnd_toStartOf="@id/fragment_weather_info__tv_wind_measure"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/fragment_weather_info__ib_cities"
+        app:layout_constraintTop_toBottomOf="@id/fragment_weather_info__tv_temperature_value"
+        tools:text="@string/wind_value" />
+
+    <TextView
+        android:id="@+id/fragment_weather_info__tv_wind_measure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/measure_margin"
+        android:text="@string/meter_per_second"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBaseline_toBaselineOf="@id/fragment_weather_info__tv_wind_value"
+        app:layout_constraintEnd_toStartOf="@id/fragment_weather_info__ib_settings"
+        app:layout_constraintStart_toEndOf="@id/fragment_weather_info__tv_wind_value" />
+
+    <TextView
+        android:id="@+id/fragment_weather_info__tv_pressure_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/fragment_weather_info__gl_current_info"
+        app:layout_constraintEnd_toStartOf="@id/fragment_weather_info__tv_pressure_measure"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/fragment_weather_info__ib_cities"
+        app:layout_constraintTop_toBottomOf="@id/fragment_weather_info__tv_wind_value"
+        tools:text="@string/pressure_value" />
+
+    <TextView
+        android:id="@+id/fragment_weather_info__tv_pressure_measure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/measure_margin"
+        android:text="@string/mm_of_mercury"
+        android:textColor="@color/darkTheme"
+        android:textSize="@dimen/subtitle_text_size"
+        app:layout_constraintBaseline_toBaselineOf="@id/fragment_weather_info__tv_pressure_value"
+        app:layout_constraintEnd_toStartOf="@id/fragment_weather_info__ib_settings"
+        app:layout_constraintStart_toEndOf="@id/fragment_weather_info__tv_pressure_value" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
