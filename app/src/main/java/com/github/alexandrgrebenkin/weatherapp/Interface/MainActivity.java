@@ -4,15 +4,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 
 import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfo;
 import com.github.alexandrgrebenkin.weatherapp.R;
 
-public class MainActivity extends AppCompatActivity implements WeatherInfoFragment.Listener {
+public class MainActivity extends AppCompatActivity implements WeatherInfoFragment.Listener, CitiesListFragment.Listener {
 
     private static final int REQUEST_CITY_CODE_ACTIVITY = 1;
+
     private WeatherInfoFragment weatherInfoFragment;
 
 
@@ -23,7 +24,6 @@ public class MainActivity extends AppCompatActivity implements WeatherInfoFragme
 
         weatherInfoFragment = (WeatherInfoFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.activity_main__fragment_weather_info);
-
     }
 
     public void onCitiesListClicked() {
@@ -47,8 +47,13 @@ public class MainActivity extends AppCompatActivity implements WeatherInfoFragme
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CITY_CODE_ACTIVITY && resultCode == RESULT_OK) {
             WeatherInfo weatherInfo = data.getParcelableExtra(WeatherInfoFragment.WEATHER_INFO);
-            weatherInfoFragment.updateFragmentData(weatherInfo);
+            weatherInfoFragment.updateWeatherInfo(weatherInfo);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void pushWeatherInfo(WeatherInfo weatherInfo) {
+        weatherInfoFragment.updateWeatherInfo(weatherInfo);
     }
 }

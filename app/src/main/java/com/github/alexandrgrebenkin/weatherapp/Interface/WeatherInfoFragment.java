@@ -1,6 +1,7 @@
 package com.github.alexandrgrebenkin.weatherapp.Interface;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,7 +24,7 @@ import com.github.alexandrgrebenkin.weatherapp.R;
  */
 public class WeatherInfoFragment extends Fragment {
 
-    public static final String WEATHER_INFO = "com.github.alexandrgrebenkin.weatherapp.WEATHER_INFO";
+    static final String WEATHER_INFO = "com.github.alexandrgrebenkin.weatherapp.WEATHER_INFO";
 
     private TextView city;
     private TextView temperatureValue;
@@ -32,6 +33,8 @@ public class WeatherInfoFragment extends Fragment {
 
     private ImageButton citiesList;
     private ImageButton settings;
+
+    private boolean isLandscape;
 
     private WeatherInfo weatherInfo;
 
@@ -52,9 +55,18 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            weatherInfo = savedInstanceState.getParcelable(WEATHER_INFO);
+        } else {
+            loadWeatherInfo();
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_weather_info, container, false);
     }
 
@@ -62,7 +74,7 @@ public class WeatherInfoFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initialize();
-        loadWeatherInfo();
+        updateFragmentData();
         startCitiesListClickListener();
         startSettingsClickListener();
         startCityClickListener();
@@ -70,12 +82,17 @@ public class WeatherInfoFragment extends Fragment {
 
     private void initialize() {
         View view = getView();
+        isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         city = view.findViewById(R.id.fragment_weather_info__tv_city);
         temperatureValue = view.findViewById(R.id.fragment_weather_info__tv_temperature_value);
         windValue = view.findViewById(R.id.fragment_weather_info__tv_wind_value);
         pressureValue = view.findViewById(R.id.fragment_weather_info__tv_pressure_value);
         citiesList = view.findViewById(R.id.fragment_weather_info__ib_cities);
         settings = view.findViewById(R.id.fragment_weather_info__ib_settings);
+
+        if (isLandscape) {
+            citiesList.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void startCitiesListClickListener() {
@@ -96,7 +113,12 @@ public class WeatherInfoFragment extends Fragment {
         });
     }
 
-    void updateFragmentData(WeatherInfo weatherInfo) {
+    void updateWeatherInfo(WeatherInfo weatherInfo) {
+        this.weatherInfo = weatherInfo;
+        updateFragmentData();
+    }
+
+    private void updateFragmentData() {
         city.setText(weatherInfo.getCityName());
         temperatureValue.setText(weatherInfo.getTemperatureValue());
         windValue.setText(weatherInfo.getWindValue());
@@ -104,8 +126,12 @@ public class WeatherInfoFragment extends Fragment {
     }
 
     private void loadWeatherInfo() {
-        WeatherInfoProvider weatherInfoProvider = new WeatherInfoProvider();
-        weatherInfo = weatherInfoProvider.getWeatherInfo("Example City");
-        updateFragmentData(weatherInfo);
+            WeatherInfoProvider weatherInfoProvider = new WeatherInfoProvider();
+            weatherInfo = weatherInfoProvider.getWeatherInfo("Example City");
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelable(WEATHER_INFO, weatherInfo);
     }
 }
