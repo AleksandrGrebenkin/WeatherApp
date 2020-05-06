@@ -1,6 +1,5 @@
 package com.github.alexandrgrebenkin.weatherapp.Interface;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,14 +7,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfo;
 import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfoProvider;
 import com.github.alexandrgrebenkin.weatherapp.R;
 
-public class MainActivity extends Activity implements Constants {
+public class MainActivity extends AppCompatActivity {
 
     private final static int REQUEST_CITY_CODE_ACTIVITY = 1;
+    final static String WEATHER_INFO = "com.github.alexandrgrebenkin.weatherapp.WEATHER_INFO";
 
     private TextView city;
     private TextView temperatureValue;
@@ -83,7 +84,7 @@ public class MainActivity extends Activity implements Constants {
 
     private void updateWeather() {
         WeatherInfoProvider weatherInfoProvider = new WeatherInfoProvider();
-        weatherInfo = weatherInfoProvider.getWeatherInfo(city.getText().toString());
+        weatherInfo = weatherInfoProvider.getWeatherInfo("Example City");
         updateViewData();
     }
 

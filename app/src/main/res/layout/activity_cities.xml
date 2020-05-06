@@ -44,40 +44,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/action_cities__et_city_name" />
 
-    <TextView
-        android:id="@+id/activity_cities__tv_moscow"
+    <ListView
+        android:id="@+id/activity_cities__lv_cities"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/moscow"
+        android:entries="@array/cities"
         android:textSize="@dimen/default_text_size"
-        app:layout_constraintBottom_toTopOf="@id/activity_cities__tv_berlin"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/action_cities__et_city_name" />
-
-    <TextView
-        android:id="@+id/activity_cities__tv_berlin"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/berlin"
-        android:textSize="@dimen/default_text_size"
-        app:layout_constraintBottom_toTopOf="@id/activity_cities__tv_paris"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_cities__tv_moscow" />
-
-    <TextView
-        android:id="@+id/activity_cities__tv_paris"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/paris"
-        android:textSize="@dimen/default_text_size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_cities__tv_berlin" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

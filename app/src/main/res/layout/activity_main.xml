@@ -44,7 +44,6 @@
         android:id="@+id/activity_main__tv_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/city"
         android:textColor="@color/darkTheme"
         android:textSize="@dimen/title_text_size"
         app:layout_constraintBottom_toTopOf="@id/activity_main__tv_temperature_value"
@@ -63,8 +62,7 @@
         app:layout_constraintEnd_toStartOf="@id/activity_main__tv_temperature_measure"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
-        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_city"
-        tools:text="@string/temperature_value" />
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_city" />
 
     <TextView
         android:id="@+id/activity_main__tv_temperature_measure"
@@ -88,8 +86,7 @@
         app:layout_constraintEnd_toStartOf="@id/activity_main__tv_wind_measure"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
-        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_temperature_value"
-        tools:text="@string/wind_value" />
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_temperature_value" />
 
     <TextView
         android:id="@+id/activity_main__tv_wind_measure"
@@ -113,8 +110,7 @@
         app:layout_constraintEnd_toStartOf="@id/activity_main__tv_pressure_measure"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/activity_main__ib_cities"
-        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_wind_value"
-        tools:text="@string/pressure_value" />
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_wind_value" />
 
     <TextView
         android:id="@+id/activity_main__tv_pressure_measure"
