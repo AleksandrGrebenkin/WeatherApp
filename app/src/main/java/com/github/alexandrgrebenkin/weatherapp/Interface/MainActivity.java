@@ -3,6 +3,7 @@ package com.github.alexandrgrebenkin.weatherapp.Interface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -19,11 +20,11 @@ public class MainActivity extends AppCompatActivity {
     final static String WEATHER_INFO = "com.github.alexandrgrebenkin.weatherapp.WEATHER_INFO";
 
     private TextView city;
-    private TextView temperatureValue;
-    private TextView windValue;
-    private TextView pressureValue;
+    private TextView temperature;
+    private TextView wind;
+    private TextView pressure;
 
-    private ImageButton cities;
+    private ImageButton citiesList;
     private ImageButton settings;
 
     private WeatherInfo weatherInfo;
@@ -42,15 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void initialize() {
         city = findViewById(R.id.activity_main__tv_city);
-        temperatureValue = findViewById(R.id.activity_main__tv_temperature_value);
-        windValue = findViewById(R.id.activity_main__tv_wind_value);
-        pressureValue = findViewById(R.id.activity_main__tv_pressure_value);
-        cities = findViewById(R.id.activity_main__ib_cities);
+        temperature = findViewById(R.id.activity_main__tv_temperature);
+        wind = findViewById(R.id.activity_main__tv_wind);
+        pressure = findViewById(R.id.activity_main__tv_pressure);
+        citiesList = findViewById(R.id.activity_main__ib_citiesList);
         settings = findViewById(R.id.activity_main__ib_settings);
     }
 
     private void startCitiesClickListener() {
-        cities.setOnClickListener((v) -> {
+        citiesList.setOnClickListener((v) -> {
             Intent intent = new Intent(getApplicationContext(), CitiesActivity.class);
             startActivityForResult(intent, REQUEST_CITY_CODE_ACTIVITY);
         });
@@ -90,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateViewData() {
         city.setText(weatherInfo.getCityName());
-        temperatureValue.setText(weatherInfo.getTemperatureValue());
-        windValue.setText(weatherInfo.getWindValue());
-        pressureValue.setText(weatherInfo.getPressureValue());
+        temperature.setText(weatherInfo.getTemperature());
+        wind.setText(weatherInfo.getWind());
+        pressure.setText(weatherInfo.getPressure());
     }
 
     @Override

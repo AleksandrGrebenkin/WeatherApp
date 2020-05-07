@@ -48,11 +48,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/title_text_size"
-        app:layout_constraintBottom_toTopOf="@id/activity_main__tv_wind"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/activity_main__gl_current_info"
+        app:layout_constraintEnd_toStartOf="@id/activity_main__tv_wind"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_main__tv_city"
-        app:layout_constraintVertical_chainStyle="packed"
         tools:text="10 ℃" />
 
     <TextView
@@ -62,8 +61,9 @@
         android:textSize="@dimen/subtitle_text_size"
         app:layout_constraintBottom_toTopOf="@id/activity_main__tv_pressure"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_temperature"
+        app:layout_constraintStart_toEndOf="@id/activity_main__tv_temperature"
+        app:layout_constraintTop_toBottomOf="@id/activity_main__tv_city"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="5 m/s" />
 
     <TextView
@@ -72,9 +72,8 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/subtitle_text_size"
         app:layout_constraintBottom_toTopOf="@id/activity_main__gl_current_info"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_main__tv_wind"
+        app:layout_constraintStart_toStartOf="@id/activity_main__tv_wind"
         tools:text="760 mmHg" />
 
 

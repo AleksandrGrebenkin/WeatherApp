@@ -31,28 +31,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Switch
-        android:id="@+id/activity_settings__sw_pressure"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/pressure"
-        android:textColor="@color/darkTheme"
-        android:textSize="@dimen/default_text_size"
-        app:layout_constraintTop_toBottomOf="@id/activity_settings__sw_dark_theme"
-        app:layout_constraintEnd_toEndOf="@id/activity_settings__sw_dark_theme"
-        app:layout_constraintStart_toStartOf="@id/activity_settings__sw_dark_theme" />
-
-    <Switch
-        android:id="@+id/activity_settings__sw_wind"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/wind"
-        android:textColor="@color/darkTheme"
-        android:textSize="@dimen/default_text_size"
-        app:layout_constraintTop_toBottomOf="@id/activity_settings__sw_pressure"
-        app:layout_constraintEnd_toEndOf="@id/activity_settings__sw_dark_theme"
-        app:layout_constraintStart_toStartOf="@id/activity_settings__sw_dark_theme" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

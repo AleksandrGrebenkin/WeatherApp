@@ -8,24 +8,24 @@ import java.util.List;
 
 public class WeatherInfo implements Parcelable {
     private String cityName;
-    private String temperatureValue;
-    private String windValue;
-    private String pressureValue;
+    private String temperature;
+    private String wind;
+    private String pressure;
 
-    public WeatherInfo(String cityName, String temperatureValue, String windValue, String pressureValue) {
+    public WeatherInfo(String cityName, String temperature, String wind, String pressure) {
         this.cityName = cityName;
-        this.temperatureValue = temperatureValue;
-        this.windValue = windValue;
-        this.pressureValue = pressureValue;
+        this.temperature = temperature;
+        this.wind = wind;
+        this.pressure = pressure;
     }
 
     protected WeatherInfo(Parcel in) {
         List<String> data = new ArrayList<>();
         in.readStringList(data);
         cityName = data.get(0);
-        temperatureValue = data.get(1);
-        windValue = data.get(2);
-        pressureValue = data.get(3);
+        temperature = data.get(1);
+        wind = data.get(2);
+        pressure = data.get(3);
     }
 
     public static final Creator<WeatherInfo> CREATOR = new Creator<WeatherInfo>() {
@@ -49,9 +49,9 @@ public class WeatherInfo implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         List<String> data = new ArrayList<>();
         data.add(cityName);
-        data.add(temperatureValue);
-        data.add(windValue);
-        data.add(pressureValue);
+        data.add(temperature);
+        data.add(wind);
+        data.add(pressure);
 
         dest.writeStringList(data);
     }
@@ -60,31 +60,17 @@ public class WeatherInfo implements Parcelable {
         return cityName;
     }
 
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
+
+    public String getTemperature() {
+        return temperature;
     }
 
-    public String getTemperatureValue() {
-        return temperatureValue;
+
+    public String getWind() {
+        return wind;
     }
 
-    public void setTemperatureValue(String temperatureValue) {
-        this.temperatureValue = temperatureValue;
-    }
-
-    public String getWindValue() {
-        return windValue;
-    }
-
-    public void setWindValue(String windValue) {
-        this.windValue = windValue;
-    }
-
-    public String getPressureValue() {
-        return pressureValue;
-    }
-
-    public void setPressureValue(String pressureValue) {
-        this.pressureValue = pressureValue;
+    public String getPressure() {
+        return pressure;
     }
 }
