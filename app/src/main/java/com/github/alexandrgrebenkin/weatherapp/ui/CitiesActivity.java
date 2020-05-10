@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.Interface;
+package com.github.alexandrgrebenkin.weatherapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfoProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.WeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.WeatherInfoProvider;
 import com.github.alexandrgrebenkin.weatherapp.R;
 
 public class CitiesActivity extends AppCompatActivity {
@@ -45,8 +45,7 @@ public class CitiesActivity extends AppCompatActivity {
     }
 
     private void pushCityInfoIntentResult(String city) {
-        WeatherInfoProvider weatherInfoProvider = new WeatherInfoProvider();
-        WeatherInfo weatherInfo = weatherInfoProvider.getWeatherInfo(city);
+        WeatherInfo weatherInfo = WeatherInfoProvider.getWeatherInfo(city);
         Intent intentResult = new Intent();
         intentResult.putExtra(MainActivity.WEATHER_INFO, weatherInfo);
         setResult(RESULT_OK, intentResult);

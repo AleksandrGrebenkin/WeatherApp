@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.Interface;
+package com.github.alexandrgrebenkin.weatherapp.ui;
 
 import android.os.Bundle;
 

@@ -1,17 +1,20 @@
-package com.github.alexandrgrebenkin.weatherapp.Interface;
+package com.github.alexandrgrebenkin.weatherapp.ui;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.Data.WeatherInfoProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.DayInfoAdapter;
+import com.github.alexandrgrebenkin.weatherapp.data.WeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.WeatherInfoProvider;
 import com.github.alexandrgrebenkin.weatherapp.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,7 +30,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton citiesList;
     private ImageButton settings;
 
+    private RecyclerView dayOfWeekRecyclerView;
+
     private WeatherInfo weatherInfo;
+    private DayInfoAdapter dayInfoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +41,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initialize();
+        updateWeather();
         startCitiesClickListener();
         startSettingsClickListener();
         startCityClickListener();
-        updateWeather();
+        setupDayOfWeekRecyclerView();
     }
 
     private void initialize() {
@@ -48,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         pressure = findViewById(R.id.activity_main__tv_pressure);
         citiesList = findViewById(R.id.activity_main__ib_citiesList);
         settings = findViewById(R.id.activity_main__ib_settings);
+        dayOfWeekRecyclerView = findViewById(R.id.activity_main__rv_day_info);
     }
 
     private void startCitiesClickListener() {
@@ -73,6 +81,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupDayOfWeekRecyclerView() {
+        dayInfoAdapter = new DayInfoAdapter(WeatherInfoProvider.getWeekWeatherInfo(city.getText().toString()));
+        dayOfWeekRecyclerView.setAdapter(dayInfoAdapter);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getApplicationContext(),
+                LinearLayoutManager.VERTICAL);
+        itemDecoration.setDrawable(getDrawable(R.drawable.separator));
+        dayOfWeekRecyclerView.addItemDecoration(itemDecoration);
+        dayOfWeekRecyclerView.setLayoutManager(layoutManager);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CITY_CODE_ACTIVITY && resultCode == RESULT_OK) {
@@ -84,8 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateWeather() {
-        WeatherInfoProvider weatherInfoProvider = new WeatherInfoProvider();
-        weatherInfo = weatherInfoProvider.getWeatherInfo("Example City");
+        weatherInfo = WeatherInfoProvider.getWeatherInfo("Example City");
         updateViewData();
     }
 
@@ -94,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         temperature.setText(weatherInfo.getTemperature());
         wind.setText(weatherInfo.getWind());
         pressure.setText(weatherInfo.getPressure());
+        setupDayOfWeekRecyclerView();
     }
 
     @Override

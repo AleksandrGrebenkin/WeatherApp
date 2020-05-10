@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.Data;
+package com.github.alexandrgrebenkin.weatherapp.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,12 +11,14 @@ public class WeatherInfo implements Parcelable {
     private String temperature;
     private String wind;
     private String pressure;
+    private String dayOfWeek;
 
-    public WeatherInfo(String cityName, String temperature, String wind, String pressure) {
+    public WeatherInfo(String cityName, String temperature, String wind, String pressure, String dayOfWeek) {
         this.cityName = cityName;
         this.temperature = temperature;
         this.wind = wind;
         this.pressure = pressure;
+        this.dayOfWeek = dayOfWeek;
     }
 
     protected WeatherInfo(Parcel in) {
@@ -26,6 +28,7 @@ public class WeatherInfo implements Parcelable {
         temperature = data.get(1);
         wind = data.get(2);
         pressure = data.get(3);
+        dayOfWeek = data.get(4);
     }
 
     public static final Creator<WeatherInfo> CREATOR = new Creator<WeatherInfo>() {
@@ -52,6 +55,7 @@ public class WeatherInfo implements Parcelable {
         data.add(temperature);
         data.add(wind);
         data.add(pressure);
+        data.add(dayOfWeek);
 
         dest.writeStringList(data);
     }
@@ -72,5 +76,9 @@ public class WeatherInfo implements Parcelable {
 
     public String getPressure() {
         return pressure;
+    }
+
+    public String getDayOfWeek() {
+        return dayOfWeek;
     }
 }

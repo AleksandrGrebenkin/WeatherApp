@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/default_padding"
-    tools:context=".Interface.MainActivity">
+    tools:context=".ui.MainActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/activity_main__gl_current_info"
@@ -77,5 +77,13 @@
         app:layout_constraintTop_toBottomOf="@id/activity_main__tv_wind"
         tools:text="760 mmHg" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_main__rv_day_info"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_main__gl_current_info" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
