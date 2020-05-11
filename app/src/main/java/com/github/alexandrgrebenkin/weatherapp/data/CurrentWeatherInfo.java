@@ -6,40 +6,37 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WeatherInfo implements Parcelable {
+public class CurrentWeatherInfo implements Parcelable {
     private String cityName;
     private String temperature;
     private String wind;
     private String pressure;
-    private String dayOfWeek;
 
-    public WeatherInfo(String cityName, String temperature, String wind, String pressure, String dayOfWeek) {
+    public CurrentWeatherInfo(String cityName, String temperature, String wind, String pressure) {
         this.cityName = cityName;
         this.temperature = temperature;
         this.wind = wind;
         this.pressure = pressure;
-        this.dayOfWeek = dayOfWeek;
     }
 
-    protected WeatherInfo(Parcel in) {
+    protected CurrentWeatherInfo(Parcel in) {
         List<String> data = new ArrayList<>();
         in.readStringList(data);
         cityName = data.get(0);
         temperature = data.get(1);
         wind = data.get(2);
         pressure = data.get(3);
-        dayOfWeek = data.get(4);
     }
 
-    public static final Creator<WeatherInfo> CREATOR = new Creator<WeatherInfo>() {
+    public static final Creator<CurrentWeatherInfo> CREATOR = new Creator<CurrentWeatherInfo>() {
         @Override
-        public WeatherInfo createFromParcel(Parcel in) {
-            return new WeatherInfo(in);
+        public CurrentWeatherInfo createFromParcel(Parcel in) {
+            return new CurrentWeatherInfo(in);
         }
 
         @Override
-        public WeatherInfo[] newArray(int size) {
-            return new WeatherInfo[size];
+        public CurrentWeatherInfo[] newArray(int size) {
+            return new CurrentWeatherInfo[size];
         }
     };
 
@@ -55,7 +52,6 @@ public class WeatherInfo implements Parcelable {
         data.add(temperature);
         data.add(wind);
         data.add(pressure);
-        data.add(dayOfWeek);
 
         dest.writeStringList(data);
     }
@@ -76,9 +72,5 @@ public class WeatherInfo implements Parcelable {
 
     public String getPressure() {
         return pressure;
-    }
-
-    public String getDayOfWeek() {
-        return dayOfWeek;
     }
 }
