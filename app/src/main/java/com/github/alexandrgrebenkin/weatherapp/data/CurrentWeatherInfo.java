@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.Data;
+package com.github.alexandrgrebenkin.weatherapp.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,20 +6,20 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WeatherInfo implements Parcelable {
+public class CurrentWeatherInfo implements Parcelable {
     private String cityName;
     private String temperature;
     private String wind;
     private String pressure;
 
-    public WeatherInfo(String cityName, String temperature, String wind, String pressure) {
+    public CurrentWeatherInfo(String cityName, String temperature, String wind, String pressure) {
         this.cityName = cityName;
         this.temperature = temperature;
         this.wind = wind;
         this.pressure = pressure;
     }
 
-    protected WeatherInfo(Parcel in) {
+    protected CurrentWeatherInfo(Parcel in) {
         List<String> data = new ArrayList<>();
         in.readStringList(data);
         cityName = data.get(0);
@@ -28,15 +28,15 @@ public class WeatherInfo implements Parcelable {
         pressure = data.get(3);
     }
 
-    public static final Creator<WeatherInfo> CREATOR = new Creator<WeatherInfo>() {
+    public static final Creator<CurrentWeatherInfo> CREATOR = new Creator<CurrentWeatherInfo>() {
         @Override
-        public WeatherInfo createFromParcel(Parcel in) {
-            return new WeatherInfo(in);
+        public CurrentWeatherInfo createFromParcel(Parcel in) {
+            return new CurrentWeatherInfo(in);
         }
 
         @Override
-        public WeatherInfo[] newArray(int size) {
-            return new WeatherInfo[size];
+        public CurrentWeatherInfo[] newArray(int size) {
+            return new CurrentWeatherInfo[size];
         }
     };
 
