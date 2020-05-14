@@ -13,19 +13,17 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/title_text_size"
         android:text="@string/settings"
-        android:textColor="@color/darkTheme"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <Switch
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/activity_settings__sw_dark_theme"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_margin"
         android:text="@string/dark_theme"
-        android:textColor="@color/darkTheme"
         android:textSize="@dimen/default_text_size"
         app:layout_constraintTop_toBottomOf="@id/activity_settings__tv_title"
         app:layout_constraintEnd_toEndOf="parent"

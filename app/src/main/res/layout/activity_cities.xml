@@ -12,37 +12,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cities"
-        android:textColor="@color/darkTheme"
         android:textSize="@dimen/title_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/action_cities__et_city_name"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/action_cities__til_city_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_margin"
-        android:hint="@string/enter_city_name"
-        android:inputType="text"
-        android:textColor="@color/darkTheme"
-        android:textSize="@dimen/default_text_size"
+        app:errorEnabled="true"
         app:layout_constraintEnd_toStartOf="@id/action_cities_btn_city_find"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_cities__tv_title" />
+        app:layout_constraintTop_toBottomOf="@id/activity_cities__tv_title">
 
-    <Button
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/action_cities__tiet_city_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_city_name"
+            android:inputType="text"
+            android:textSize="@dimen/default_text_size" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/action_cities_btn_city_find"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/find"
         android:textAllCaps="false"
-        android:textColor="@color/darkTheme"
         android:textSize="@dimen/default_text_size"
-        app:layout_constraintBaseline_toBaselineOf="@id/action_cities__et_city_name"
+        app:layout_constraintBottom_toBottomOf="@id/action_cities__til_city_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/action_cities__et_city_name" />
+        app:layout_constraintStart_toEndOf="@id/action_cities__til_city_name"
+        app:layout_constraintTop_toTopOf="@id/action_cities__til_city_name" />
 
     <ListView
         android:id="@+id/activity_cities__lv_cities"
@@ -54,7 +59,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/action_cities__et_city_name" />
+        app:layout_constraintTop_toBottomOf="@id/action_cities__til_city_name" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
