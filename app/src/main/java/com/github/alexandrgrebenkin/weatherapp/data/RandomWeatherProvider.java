@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RandomWeatherProvider implements WeatherProvider {
-    public CurrentWeatherInfo getCurrentForecast(String cityName){
+
+    public CurrentWeatherInfo getCurrentWeatherInfo(String cityName){
 
         return new CurrentWeatherInfo(cityName, getTemperature(), getWind(), getPressure());
     }
 
-    public List<DayWeatherInfo> getWeekForecast(String cityName) {
+    public List<DayWeatherInfo> getForecastWeatherInfo(String cityName) {
         List<DayWeatherInfo> weekForecastList = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             DayWeatherInfo dayWeatherInfo = new DayWeatherInfo();

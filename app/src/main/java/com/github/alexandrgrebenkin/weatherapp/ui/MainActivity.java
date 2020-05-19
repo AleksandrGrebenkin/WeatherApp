@@ -3,23 +3,25 @@ package com.github.alexandrgrebenkin.weatherapp.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.alexandrgrebenkin.weatherapp.data.CurrentWeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.RandomWeatherProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.InternetWeatherProvider;
 import com.github.alexandrgrebenkin.weatherapp.R;
 import com.github.alexandrgrebenkin.weatherapp.data.WeatherProvider;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private final static int REQUEST_CITY_CODE_ACTIVITY = 1;
+    private final static int SETTING_CODE = 101;
+
     final static String WEATHER_INFO = "com.github.alexandrgrebenkin.weatherapp.WEATHER_INFO";
 
     private TextView city;
@@ -32,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView dayOfWeekRecyclerView;
 
-    private CurrentWeatherInfo currentWeatherInfo;
+    private CurrentWeatherInfo currentWeatherInfo
+            = new CurrentWeatherInfo("", "", "", "");
     private WeatherProvider weatherProvider;
 
     @Override
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         startCitiesClickListener();
         startSettingsClickListener();
         startCityClickListener();
-        setupDayOfWeekRecyclerView();
+//        setupDayOfWeekRecyclerView();
     }
 
     private void initialize() {
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         citiesList = findViewById(R.id.activity_main__ib_citiesList);
         settings = findViewById(R.id.activity_main__ib_settings);
         dayOfWeekRecyclerView = findViewById(R.id.activity_main__rv_day_info);
-        weatherProvider = new RandomWeatherProvider();
+        weatherProvider = new InternetWeatherProvider();
     }
 
     private void startCitiesClickListener() {
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private void startSettingsClickListener() {
         settings.setOnClickListener((v) -> {
             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, SETTING_CODE);
         });
     }
 
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupDayOfWeekRecyclerView() {
-        WeekInfo weekInfo = new WeekInfo(weatherProvider.getWeekForecast(city.getText().toString()));
+        WeekInfo weekInfo = new WeekInfo(weatherProvider.getForecastWeatherInfo(city.getText().toString()));
         dayOfWeekRecyclerView.setAdapter(weekInfo);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -98,32 +101,39 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CITY_CODE_ACTIVITY && resultCode == RESULT_OK) {
-            currentWeatherInfo = data.getParcelableExtra(WEATHER_INFO);
-            updateViewData();
-        }
-
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CITY_CODE_ACTIVITY && resultCode == RESULT_OK) {
+            updateViewData(data.getParcelableExtra(WEATHER_INFO));
+        }
+        if (requestCode == SETTING_CODE) {
+            recreate();
+        }
     }
 
     private void updateWeather() {
-        currentWeatherInfo = weatherProvider.getCurrentForecast("Example City");
-        updateViewData();
+        Handler handler = new Handler();
+        new Thread(() -> {
+            CurrentWeatherInfo currentWeatherInfo = weatherProvider.getCurrentWeatherInfo("Example City");
+            handler.post(() -> {
+                updateViewData(currentWeatherInfo);
+            });
+        }).start();
+
     }
 
-    private void updateViewData() {
+    private void updateViewData(CurrentWeatherInfo currentWeatherInfo) {
+        this.currentWeatherInfo = currentWeatherInfo;
         city.setText(currentWeatherInfo.getCityName());
         temperature.setText(currentWeatherInfo.getTemperature());
         wind.setText(currentWeatherInfo.getWind());
         pressure.setText(currentWeatherInfo.getPressure());
-        setupDayOfWeekRecyclerView();
+        //setupDayOfWeekRecyclerView();
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        currentWeatherInfo = savedInstanceState.getParcelable(WEATHER_INFO);
-        updateViewData();
+        updateViewData(savedInstanceState.getParcelable(WEATHER_INFO));
     }
 
     @Override
