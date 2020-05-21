@@ -38,7 +38,7 @@ public class InternetWeatherProvider implements WeatherProvider {
                 InputStream inStream = urlConnection.getInputStream();
                 InputStreamReader isr = new InputStreamReader(inStream);
                 BufferedReader in = new BufferedReader(isr);
-                String result = getLines(in);
+                String result = Utils.getLines(in);
                 Gson gson = new Gson();
                 final CurrentWeatherRequest request = gson.fromJson(result, CurrentWeatherRequest.class);
                 currentWeatherRequest = request;
@@ -53,10 +53,6 @@ public class InternetWeatherProvider implements WeatherProvider {
             e.printStackTrace();
         }
         return currentWeatherRequest;
-    }
-
-    private String getLines(BufferedReader in) {
-        return in.lines().collect(Collectors.joining("\n"));
     }
 
     @Override

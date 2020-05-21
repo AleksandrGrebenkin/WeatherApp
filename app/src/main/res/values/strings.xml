@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Weather App</string>
-    <string name="empty_field_error">The field cannot be empty</string>
+    <string name="less_2_symbols_length_error">The field cannot be less 2 symbols</string>
 
 <!--    Main-->
     <string name="celsius">℃</string>
@@ -14,15 +14,12 @@
     <string name="cities">Cities</string>
     <string name="enter_city_name">Enter city name</string>
     <string name="find">Find</string>
-    <string-array name="cities">
-        <item>Moscow</item>
-        <item>Berlin</item>
-        <item>Paris</item>
-    </string-array>
+    <string name="empty_data">Result is empty</string>
 
 <!--    Settings-->
     <string name="settings">Settings</string>
     <string name="dark_theme">Dark theme</string>
     <string name="pressure">Pressure</string>
     <string name="wind">Wind</string>
+    <string name="cities_info_message">Enter city name and choose from list</string>
 </resources>

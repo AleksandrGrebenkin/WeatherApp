@@ -21,6 +21,8 @@ android {
         it.buildConfigField "String", "WEATHER_APP_ID", weatherAppId
         def weatherAppKey = properties.getProperty("weather_app_key", "")
         it.buildConfigField "String", "WEATHER_APP_KEY", weatherAppKey
+        def locationToken = properties.getProperty("locationiq_token", "")
+        it.buildConfigField "String", "LOCATION_TOKEN", locationToken
     }
 
     buildTypes {
