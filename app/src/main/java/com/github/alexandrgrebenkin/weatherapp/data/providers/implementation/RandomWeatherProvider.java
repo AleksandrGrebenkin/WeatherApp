@@ -1,4 +1,9 @@
-package com.github.alexandrgrebenkin.weatherapp.data;
+package com.github.alexandrgrebenkin.weatherapp.data.providers.implementation;
+
+import com.github.alexandrgrebenkin.weatherapp.data.CurrentWeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.DayWeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.PlaceInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.providers.WeatherProvider;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -6,9 +11,9 @@ import java.util.List;
 
 public class RandomWeatherProvider implements WeatherProvider {
 
-    public CurrentWeatherInfo getCurrentWeatherInfo(String cityName){
+    public CurrentWeatherInfo getCurrentWeatherInfo(PlaceInfo placeInfo){
 
-        return new CurrentWeatherInfo(cityName, getTemperature(), getWind(), getPressure());
+        return new CurrentWeatherInfo(placeInfo.getName(), getTemperature(), getWind(), getPressure());
     }
 
     public List<DayWeatherInfo> getForecastWeatherInfo(String cityName) {

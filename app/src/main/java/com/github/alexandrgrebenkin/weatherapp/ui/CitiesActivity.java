@@ -5,27 +5,27 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.alexandrgrebenkin.weatherapp.data.CurrentWeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.InternetPlaceProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.PlaceInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.providers.implementation.InternetPlaceProvider;
 import com.github.alexandrgrebenkin.weatherapp.data.Place;
-import com.github.alexandrgrebenkin.weatherapp.data.PlacesProvider;
-import com.github.alexandrgrebenkin.weatherapp.data.RandomWeatherProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.providers.PlacesProvider;
 import com.github.alexandrgrebenkin.weatherapp.R;
-import com.github.alexandrgrebenkin.weatherapp.data.WeatherProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Arrays;
 import java.util.List;
 
 
 public class CitiesActivity extends BaseActivity {
+    private static final String PLACE_LIST = "com.github.alexandrgrebenkin.weatherapp.PLACE_LIST";
 
     private TextInputEditText cityName;
     private TextInputLayout cityNameLayout;
@@ -44,7 +44,6 @@ public class CitiesActivity extends BaseActivity {
         initialize();
         checkPlaceData();
         startCityFindClickListener();
-        //startFavoriteCityListListener();
         Snackbar.make(cityFind, R.string.cities_info_message, Snackbar.LENGTH_LONG).show();
     }
 
@@ -96,30 +95,18 @@ public class CitiesActivity extends BaseActivity {
 
         placeAdapter.setOnItemClickListener((view, position) -> {
             Place place = places.get(position);
-            Toast.makeText(getApplicationContext(),
-                    String.format("lat: %s; lon: %s", place.getLat(), place.getLon()),
-                    Toast.LENGTH_SHORT).show();
+            PlaceInfo placeInfo = new PlaceInfo(place.getDisplayName().split(",")[0],
+                    place.getLat(), place.getLon());
+            pushCityInfoIntentResult(placeInfo);
         });
-//        placeArrayAdapter.notifyDataSetChanged();
-//        cities.invalidateViews();
-//        cities.refreshDrawableState();
-//        ArrayList<String> strings = new ArrayList<>();
-//        strings.add("String1");
-//        strings.add("String2");
-//        strings.add("String3");
-//        ArrayAdapter<String> stringAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-//                strings);
-//        cities.setAdapter(stringAdapter);
     }
 
-    private void pushCityInfoIntentResult(String city) {
+    private void pushCityInfoIntentResult(PlaceInfo placeInfo) {
         if (hasErrors) {
             return;
         }
-        WeatherProvider weatherProvider = new RandomWeatherProvider();
-        CurrentWeatherInfo currentWeatherInfo = weatherProvider.getCurrentWeatherInfo(city);
         Intent intentResult = new Intent();
-        intentResult.putExtra(MainActivity.WEATHER_INFO, currentWeatherInfo);
+        intentResult.putExtra(MainActivity.PLACE_INFO, placeInfo);
         setResult(RESULT_OK, intentResult);
         finish();
     }
@@ -133,11 +120,23 @@ public class CitiesActivity extends BaseActivity {
             emptyData.setVisibility(View.GONE);
         }
     }
-//    private void startFavoriteCityListListener() {
-//        cities.setOnItemClickListener((parent, view, position, id) -> {
-//            hasErrors = false;
-//            String city = ((TextView) view).getText().toString();
-//            pushCityInfoIntentResult(city);
-//        });
-//    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Place[] placeArray = (Place[]) savedInstanceState.getParcelableArray(PLACE_LIST);
+        if (placeArray != null) {
+            refreshList(Arrays.asList(placeArray));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (placeList != null) {
+            Place[] placeArray = new Place[placeList.size()];
+            placeList.toArray(placeArray);
+            outState.putParcelableArray(PLACE_LIST, placeArray);
+        }
+    }
 }

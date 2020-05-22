@@ -1,8 +1,11 @@
-package com.github.alexandrgrebenkin.weatherapp.data;
+package com.github.alexandrgrebenkin.weatherapp.data.providers.implementation;
 
 import android.util.Log;
 
 import com.github.alexandrgrebenkin.weatherapp.BuildConfig;
+import com.github.alexandrgrebenkin.weatherapp.data.Place;
+import com.github.alexandrgrebenkin.weatherapp.data.Utils;
+import com.github.alexandrgrebenkin.weatherapp.data.providers.PlacesProvider;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -46,7 +49,9 @@ public class InternetPlaceProvider implements PlacesProvider {
                 Log.e(TAG, "Failed connection:" + e.getMessage());
                 e.printStackTrace();
             } finally {
-                urlConnection.disconnect();
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
             }
         } catch (MalformedURLException e) {
             Log.e(TAG, "Incorrect URL");

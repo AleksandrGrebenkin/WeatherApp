@@ -13,9 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.alexandrgrebenkin.weatherapp.data.CurrentWeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.InternetWeatherProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.PlaceInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.providers.implementation.InternetWeatherProvider;
 import com.github.alexandrgrebenkin.weatherapp.R;
-import com.github.alexandrgrebenkin.weatherapp.data.WeatherProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.providers.WeatherProvider;
 
 public class MainActivity extends BaseActivity {
 
@@ -23,6 +24,7 @@ public class MainActivity extends BaseActivity {
     private final static int SETTING_CODE = 101;
 
     final static String WEATHER_INFO = "com.github.alexandrgrebenkin.weatherapp.WEATHER_INFO";
+    final static String PLACE_INFO = "com.github.alexandrgrebenkin.weatherapp.PLACE_INFO";
 
     private TextView city;
     private TextView temperature;
@@ -44,7 +46,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         initialize();
-        updateWeather();
+        updateWeather(null);
         startCitiesClickListener();
         startSettingsClickListener();
         startCityClickListener();
@@ -103,17 +105,22 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CITY_CODE_ACTIVITY && resultCode == RESULT_OK) {
-            updateViewData(data.getParcelableExtra(WEATHER_INFO));
+            PlaceInfo placeInfo = data.getParcelableExtra(PLACE_INFO);
+            updateWeather(placeInfo);
         }
         if (requestCode == SETTING_CODE) {
             recreate();
         }
     }
 
-    private void updateWeather() {
+    private void updateWeather(PlaceInfo placeInfo) {
+        if (placeInfo == null) {
+            placeInfo = new PlaceInfo("Moscow", "55.7504461", "55.7504461");
+        }
         Handler handler = new Handler();
+        PlaceInfo finalPlaceInfo = placeInfo;
         new Thread(() -> {
-            CurrentWeatherInfo currentWeatherInfo = weatherProvider.getCurrentWeatherInfo("Example City");
+            CurrentWeatherInfo currentWeatherInfo = weatherProvider.getCurrentWeatherInfo(finalPlaceInfo);
             handler.post(() -> {
                 updateViewData(currentWeatherInfo);
             });
@@ -133,7 +140,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        updateViewData(savedInstanceState.getParcelable(WEATHER_INFO));
+        if (savedInstanceState != null) {
+            updateViewData(savedInstanceState.getParcelable(WEATHER_INFO));
+        }
     }
 
     @Override

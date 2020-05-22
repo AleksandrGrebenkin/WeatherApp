@@ -1,8 +1,14 @@
-package com.github.alexandrgrebenkin.weatherapp.data;
+package com.github.alexandrgrebenkin.weatherapp.data.providers.implementation;
 
 import android.util.Log;
 
 import com.github.alexandrgrebenkin.weatherapp.BuildConfig;
+import com.github.alexandrgrebenkin.weatherapp.data.CurrentWeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.CurrentWeatherRequest;
+import com.github.alexandrgrebenkin.weatherapp.data.DayWeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.PlaceInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.Utils;
+import com.github.alexandrgrebenkin.weatherapp.data.providers.WeatherProvider;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -13,21 +19,20 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class InternetWeatherProvider implements WeatherProvider {
     private static final String TAG = "WEATHER_APP";
     private static final String WEATHER_URL =
-            "http://api.weatherunlocked.com/api/{TYPE}/51.50,-0.12?app_id={APP_ID}&app_key={APP_KEY}";
-    private static final String WEATHER_APP_ID = BuildConfig.WEATHER_APP_ID;
-    private static final String WEATHER_APP_KEY = BuildConfig.WEATHER_APP_KEY;
+            "http://api.weatherunlocked.com/api/{TYPE}/{LAT},{LON}?app_id={APP_ID}&app_key={APP_KEY}"
+                    .replace("{APP_ID}", BuildConfig.WEATHER_APP_ID)
+                    .replace("{APP_KEY}", BuildConfig.WEATHER_APP_KEY);
 
-    public CurrentWeatherRequest getCurrentWeatherRequest() {
+    public CurrentWeatherRequest getCurrentWeatherRequest(PlaceInfo placeInfo) {
         CurrentWeatherRequest currentWeatherRequest = null;
         String weatherUrl = WEATHER_URL
                 .replace("{TYPE}", "current")
-                .replace("{APP_ID}", WEATHER_APP_ID)
-                .replace("{APP_KEY}", WEATHER_APP_KEY);
+                .replace("{LAT}", placeInfo.getLat())
+                .replace("{LON}", placeInfo.getLon());
         try {
             final URL uri = new URL(weatherUrl);
             HttpURLConnection urlConnection = null;
@@ -46,7 +51,9 @@ public class InternetWeatherProvider implements WeatherProvider {
                 Log.e(TAG, "Failed connection:" + e.getMessage());
                 e.printStackTrace();
             } finally {
-                urlConnection.disconnect();
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
             }
         } catch (MalformedURLException e) {
             Log.e(TAG, "Incorrect URL");
@@ -56,12 +63,12 @@ public class InternetWeatherProvider implements WeatherProvider {
     }
 
     @Override
-    public CurrentWeatherInfo getCurrentWeatherInfo(String cityName) {
-        CurrentWeatherRequest request = getCurrentWeatherRequest();
+    public CurrentWeatherInfo getCurrentWeatherInfo(PlaceInfo placeInfo) {
+        CurrentWeatherRequest request = getCurrentWeatherRequest(placeInfo);
         String temperature = String.valueOf(request.getTemp_c());
         String wind = String.valueOf(request.getWindspd_ms());
         String pressure = String.valueOf(request.getSlp_mb());
-        return new CurrentWeatherInfo(cityName, temperature, wind, pressure);
+        return new CurrentWeatherInfo(placeInfo.getName(), temperature, wind, pressure);
     }
 
     @Override

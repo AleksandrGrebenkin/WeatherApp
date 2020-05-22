@@ -1,8 +1,5 @@
 package com.github.alexandrgrebenkin.weatherapp.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 public class CurrentWeatherRequest {
     private float lat;
     private float lon;
