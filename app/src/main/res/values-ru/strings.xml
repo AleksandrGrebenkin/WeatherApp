@@ -3,10 +3,6 @@
     <string name="less_2_symbols_length_error">Поле не может быть меньше 2 символов</string>
 
 <!--    Main-->
-    <string name="celsius">℃</string>
-    <string name="fahrenheit">℉</string>
-    <string name="meter_per_second">м/с</string>
-    <string name="mm_of_mercury">мм рт. ст.</string>
     <string name="cities_content_description">Список городов</string>
     <string name="settings_content_description">Настройки</string>
 
@@ -22,4 +18,12 @@
     <string name="pressure">Давление</string>
     <string name="wind">Ветер</string>
     <string name="cities_info_message">Введите название города и выберите из списка</string>
+
+<!--    Measure units-->
+    <string name="celsius">℃</string>
+    <string name="fahrenheit">℉</string>
+    <string name="meter_per_second">м/с</string>
+    <string name="mm_of_mercury">мм рт. ст.</string>
+    <string name="in_of_mercury">дюйм рт.ст.</string>
+
 </resources>

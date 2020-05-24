@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface WeatherProvider {
     CurrentWeatherInfo getCurrentWeatherInfo(PlaceInfo placeInfo);
-    List<DayWeatherInfo> getForecastWeatherInfo(String cityName);
+    List<DayWeatherInfo> getForecastWeatherInfo(PlaceInfo placeInfo);
 }

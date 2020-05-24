@@ -3,10 +3,6 @@
     <string name="less_2_symbols_length_error">The field cannot be less 2 symbols</string>
 
 <!--    Main-->
-    <string name="celsius">℃</string>
-    <string name="fahrenheit">℉</string>
-    <string name="meter_per_second">m/s</string>
-    <string name="mm_of_mercury">mmHg</string>
     <string name="cities_content_description">Cities list</string>
     <string name="settings_content_description">Settings</string>
 
@@ -22,4 +18,11 @@
     <string name="pressure">Pressure</string>
     <string name="wind">Wind</string>
     <string name="cities_info_message">Enter city name and choose from list</string>
+
+<!--    Measure units-->
+    <string name="celsius">℃</string>
+    <string name="fahrenheit">℉</string>
+    <string name="meter_per_second">m/s</string>
+    <string name="mm_of_mercury">mmHg</string>
+    <string name="in_of_mercury">inHg</string>
 </resources>

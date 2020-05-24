@@ -8,4 +8,7 @@ public class Utils {
         return in.lines().collect(Collectors.joining("\n"));
     }
 
+    public static String getRoundValueFromFloat (float f) {
+        return String.valueOf(Math.round(f));
+    }
 }

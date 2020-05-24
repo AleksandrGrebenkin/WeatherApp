@@ -1,243 +1,221 @@
 package com.github.alexandrgrebenkin.weatherapp.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public class CurrentWeatherRequest {
-    private float lat;
-    private float lon;
-    private float alt_m;
-    private float alt_ft;
-    private String wx_desc;
-    private float wx_code;
-    private String wx_icon;
-    private float temp_c;
-    private float temp_f;
-    private float feelslike_c;
-    private float feelslike_f;
-    private float humid_pct;
-    private float windspd_mph;
-    private float windspd_kmh;
-    private float windspd_kts;
-    private float windspd_ms;
-    private float winddir_deg;
-    private String winddir_compass;
-    private float cloudtotal_pct;
-    private float vis_km;
-    private float vis_mi;
-    private String vis_desc = null;
-    private float slp_mb;
-    private float slp_in;
-    private float dewpoint_c;
-    private float dewpoint_f;
+    @SerializedName("lat")
+    private float latitude;
+    @SerializedName("lon")
+    private float longitude;
+    @SerializedName("wx_desc")
+    private String weatherDescription;
+    @SerializedName("wx_code")
+    private float weatherCode;
+    @SerializedName("wx_icon")
+    private String weatherIcon;
+    @SerializedName("temp_c")
+    private float tempC;
+    @SerializedName("temp_f")
+    private float tempF;
+    @SerializedName("feelslike_c")
+    private float feelsLikeC;
+    @SerializedName("feelslike_f")
+    private float feelLikeF;
+    @SerializedName("humid_pct")
+    private float humidityPercent;
+    @SerializedName("windspd_mph")
+    private float windSpeedMPH;
+    @SerializedName("windspd_kmh")
+    private float windSpeedKmH;
+    @SerializedName("windspd_kts")
+    private float windSpeedKnots;
+    @SerializedName("windspd_ms")
+    private float windSpeedMS;
+    @SerializedName("winddir_deg")
+    private float windDirectionDegrees;
+    @SerializedName("winddir_compass")
+    private String windDirectionCompass;
+    @SerializedName("cloudtotal_pct")
+    private float cloudAmountPercent;
+    @SerializedName("vis_km")
+    private float visibilityKm;
+    @SerializedName("vis_mi")
+    private float visibilityMi;
+    @SerializedName("slp_mb")
+    private float pressureMillibars;
+    @SerializedName("slp_in")
+    private float pressureInches;
 
 
     // Getter Methods
 
-    public float getLat() {
-        return lat;
+    public float getLatitude() {
+        return latitude;
     }
 
-    public float getLon() {
-        return lon;
+    public float getLongitude() {
+        return longitude;
     }
 
-    public float getAlt_m() {
-        return alt_m;
+    public String getWeatherDescription() {
+        return weatherDescription;
     }
 
-    public float getAlt_ft() {
-        return alt_ft;
+    public float getWeatherCode() {
+        return weatherCode;
     }
 
-    public String getWx_desc() {
-        return wx_desc;
+    public String getWeatherIcon() {
+        return weatherIcon;
     }
 
-    public float getWx_code() {
-        return wx_code;
+    public float getTempC() {
+        return tempC;
     }
 
-    public String getWx_icon() {
-        return wx_icon;
+    public float getTempF() {
+        return tempF;
     }
 
-    public float getTemp_c() {
-        return temp_c;
+    public float getFeelsLikeC() {
+        return feelsLikeC;
     }
 
-    public float getTemp_f() {
-        return temp_f;
+    public float getFeelLikeF() {
+        return feelLikeF;
     }
 
-    public float getFeelslike_c() {
-        return feelslike_c;
+    public float getHumidityPercent() {
+        return humidityPercent;
     }
 
-    public float getFeelslike_f() {
-        return feelslike_f;
+    public float getWindSpeedMPH() {
+        return windSpeedMPH;
     }
 
-    public float getHumid_pct() {
-        return humid_pct;
+    public float getWindSpeedKmH() {
+        return windSpeedKmH;
     }
 
-    public float getWindspd_mph() {
-        return windspd_mph;
+    public float getWindSpeedKnots() {
+        return windSpeedKnots;
     }
 
-    public float getWindspd_kmh() {
-        return windspd_kmh;
+    public float getWindSpeedMS() {
+        return windSpeedMS;
     }
 
-    public float getWindspd_kts() {
-        return windspd_kts;
+    public float getWindDirectionDegrees() {
+        return windDirectionDegrees;
     }
 
-    public float getWindspd_ms() {
-        return windspd_ms;
+    public String getWindDirectionCompass() {
+        return windDirectionCompass;
     }
 
-    public float getWinddir_deg() {
-        return winddir_deg;
+    public float getCloudAmountPercent() {
+        return cloudAmountPercent;
     }
 
-    public String getWinddir_compass() {
-        return winddir_compass;
+    public float getVisibilityKm() {
+        return visibilityKm;
     }
 
-    public float getCloudtotal_pct() {
-        return cloudtotal_pct;
+    public float getVisibilityMi() {
+        return visibilityMi;
     }
 
-    public float getVis_km() {
-        return vis_km;
+    public float getPressureMillibars() {
+        return pressureMillibars;
     }
 
-    public float getVis_mi() {
-        return vis_mi;
-    }
-
-    public String getVis_desc() {
-        return vis_desc;
-    }
-
-    public float getSlp_mb() {
-        return slp_mb;
-    }
-
-    public float getSlp_in() {
-        return slp_in;
-    }
-
-    public float getDewpoint_c() {
-        return dewpoint_c;
-    }
-
-    public float getDewpoint_f() {
-        return dewpoint_f;
+    public float getPressureInches() {
+        return pressureInches;
     }
 
     // Setter Methods
 
-    public void setLat(float lat) {
-        this.lat = lat;
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
     }
 
-    public void setLon(float lon) {
-        this.lon = lon;
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
     }
 
-    public void setAlt_m(float alt_m) {
-        this.alt_m = alt_m;
+    public void setWeatherDescription(String weatherDescription) {
+        this.weatherDescription = weatherDescription;
     }
 
-    public void setAlt_ft(float alt_ft) {
-        this.alt_ft = alt_ft;
+    public void setWeatherCode(float weatherCode) {
+        this.weatherCode = weatherCode;
     }
 
-    public void setWx_desc(String wx_desc) {
-        this.wx_desc = wx_desc;
+    public void setWeatherIcon(String weatherIcon) {
+        this.weatherIcon = weatherIcon;
     }
 
-    public void setWx_code(float wx_code) {
-        this.wx_code = wx_code;
+    public void setTempC(float tempC) {
+        this.tempC = tempC;
     }
 
-    public void setWx_icon(String wx_icon) {
-        this.wx_icon = wx_icon;
+    public void setTempF(float tempF) {
+        this.tempF = tempF;
     }
 
-    public void setTemp_c(float temp_c) {
-        this.temp_c = temp_c;
+    public void setFeelsLikeC(float feelsLikeC) {
+        this.feelsLikeC = feelsLikeC;
     }
 
-    public void setTemp_f(float temp_f) {
-        this.temp_f = temp_f;
+    public void setFeelLikeF(float feelLikeF) {
+        this.feelLikeF = feelLikeF;
     }
 
-    public void setFeelslike_c(float feelslike_c) {
-        this.feelslike_c = feelslike_c;
+    public void setHumidityPercent(float humidityPercent) {
+        this.humidityPercent = humidityPercent;
     }
 
-    public void setFeelslike_f(float feelslike_f) {
-        this.feelslike_f = feelslike_f;
+    public void setWindSpeedMPH(float windSpeedMPH) {
+        this.windSpeedMPH = windSpeedMPH;
     }
 
-    public void setHumid_pct(float humid_pct) {
-        this.humid_pct = humid_pct;
+    public void setWindSpeedKmH(float windSpeedKmH) {
+        this.windSpeedKmH = windSpeedKmH;
     }
 
-    public void setWindspd_mph(float windspd_mph) {
-        this.windspd_mph = windspd_mph;
+    public void setWindSpeedKnots(float windSpeedKnots) {
+        this.windSpeedKnots = windSpeedKnots;
     }
 
-    public void setWindspd_kmh(float windspd_kmh) {
-        this.windspd_kmh = windspd_kmh;
+    public void setWindSpeedMS(float windSpeedMS) {
+        this.windSpeedMS = windSpeedMS;
     }
 
-    public void setWindspd_kts(float windspd_kts) {
-        this.windspd_kts = windspd_kts;
+    public void setWindDirectionDegrees(float windDirectionDegrees) {
+        this.windDirectionDegrees = windDirectionDegrees;
     }
 
-    public void setWindspd_ms(float windspd_ms) {
-        this.windspd_ms = windspd_ms;
+    public void setWindDirectionCompass(String windDirectionCompass) {
+        this.windDirectionCompass = windDirectionCompass;
     }
 
-    public void setWinddir_deg(float winddir_deg) {
-        this.winddir_deg = winddir_deg;
+    public void setCloudAmountPercent(float cloudAmountPercent) {
+        this.cloudAmountPercent = cloudAmountPercent;
     }
 
-    public void setWinddir_compass(String winddir_compass) {
-        this.winddir_compass = winddir_compass;
+    public void setVisibilityKm(float visibilityKm) {
+        this.visibilityKm = visibilityKm;
     }
 
-    public void setCloudtotal_pct(float cloudtotal_pct) {
-        this.cloudtotal_pct = cloudtotal_pct;
+    public void setVisibilityMi(float visibilityMi) {
+        this.visibilityMi = visibilityMi;
     }
 
-    public void setVis_km(float vis_km) {
-        this.vis_km = vis_km;
+    public void setPressureMillibars(float pressureMillibars) {
+        this.pressureMillibars = pressureMillibars;
     }
 
-    public void setVis_mi(float vis_mi) {
-        this.vis_mi = vis_mi;
-    }
-
-    public void setVis_desc(String vis_desc) {
-        this.vis_desc = vis_desc;
-    }
-
-    public void setSlp_mb(float slp_mb) {
-        this.slp_mb = slp_mb;
-    }
-
-    public void setSlp_in(float slp_in) {
-        this.slp_in = slp_in;
-    }
-
-    public void setDewpoint_c(float dewpoint_c) {
-        this.dewpoint_c = dewpoint_c;
-    }
-
-    public void setDewpoint_f(float dewpoint_f) {
-        this.dewpoint_f = dewpoint_f;
+    public void setPressureInches(float pressureInches) {
+        this.pressureInches = pressureInches;
     }
 }

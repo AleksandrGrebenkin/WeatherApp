@@ -8,24 +8,24 @@ import java.util.List;
 
 public class CurrentWeatherInfo implements Parcelable {
     private String cityName;
-    private String temperature;
-    private String wind;
-    private String pressure;
+    private String tempCelsius;
+    private String windSpeedMS;
+    private String pressureMm;
 
-    public CurrentWeatherInfo(String cityName, String temperature, String wind, String pressure) {
+    public CurrentWeatherInfo(String cityName, String tempCelsius, String windSpeedMS, String pressureMm) {
         this.cityName = cityName;
-        this.temperature = temperature;
-        this.wind = wind;
-        this.pressure = pressure;
+        this.tempCelsius = tempCelsius;
+        this.windSpeedMS = windSpeedMS;
+        this.pressureMm = pressureMm;
     }
 
     protected CurrentWeatherInfo(Parcel in) {
         List<String> data = new ArrayList<>();
         in.readStringList(data);
         cityName = data.get(0);
-        temperature = data.get(1);
-        wind = data.get(2);
-        pressure = data.get(3);
+        tempCelsius = data.get(1);
+        windSpeedMS = data.get(2);
+        pressureMm = data.get(3);
     }
 
     public static final Creator<CurrentWeatherInfo> CREATOR = new Creator<CurrentWeatherInfo>() {
@@ -49,9 +49,9 @@ public class CurrentWeatherInfo implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         List<String> data = new ArrayList<>();
         data.add(cityName);
-        data.add(temperature);
-        data.add(wind);
-        data.add(pressure);
+        data.add(tempCelsius);
+        data.add(windSpeedMS);
+        data.add(pressureMm);
 
         dest.writeStringList(data);
     }
@@ -61,16 +61,16 @@ public class CurrentWeatherInfo implements Parcelable {
     }
 
 
-    public String getTemperature() {
-        return temperature;
+    public String getTempCelsius() {
+        return tempCelsius;
     }
 
 
-    public String getWind() {
-        return wind;
+    public String getWindSpeedMS() {
+        return windSpeedMS;
     }
 
-    public String getPressure() {
-        return pressure;
+    public String getPressureMm() {
+        return pressureMm;
     }
 }

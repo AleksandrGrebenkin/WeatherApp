@@ -6,6 +6,7 @@ import com.github.alexandrgrebenkin.weatherapp.data.PlaceInfo;
 import com.github.alexandrgrebenkin.weatherapp.data.providers.WeatherProvider;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,35 +17,30 @@ public class RandomWeatherProvider implements WeatherProvider {
         return new CurrentWeatherInfo(placeInfo.getName(), getTemperature(), getWind(), getPressure());
     }
 
-    public List<DayWeatherInfo> getForecastWeatherInfo(String cityName) {
+    public List<DayWeatherInfo> getForecastWeatherInfo(PlaceInfo placeInfo) {
         List<DayWeatherInfo> weekForecastList = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             DayWeatherInfo dayWeatherInfo = new DayWeatherInfo();
-            dayWeatherInfo.setDate(LocalDate.now().plusDays(i));
-            Integer maxTempValue = (int) (Math.random()*30-15);
-            Integer minTempValue = maxTempValue - (int) (Math.random()*5+1);
-            dayWeatherInfo.setTempMaxC(maxTempValue.toString());
-            dayWeatherInfo.setTempMinC(minTempValue.toString());
+            dayWeatherInfo.setDate(LocalDate.now().plusDays(i)
+                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            float maxTempValue = (float) (Math.random()*30-15);
+            float minTempValue = (float) (maxTempValue - (Math.random()*5+1));
+            dayWeatherInfo.setTempMinC(minTempValue);
+            dayWeatherInfo.setTempMaxC(maxTempValue);
             weekForecastList.add(dayWeatherInfo);
         }
         return weekForecastList;
     }
 
     private String getTemperature() {
-        String temperatureValue = Integer.valueOf((int) (Math.random()*30-15)).toString();
-        String temperatureMeasure = "℃";
-        return temperatureValue + " " + temperatureMeasure;
+        return Integer.valueOf((int) (Math.random()*30-15)).toString();
     }
 
     private String getWind() {
-        String windValue = Integer.valueOf((int) (Math.random()*10)).toString();
-        String windMeasure = "m/s";
-        return windValue + " " + windMeasure;
+        return Integer.valueOf((int) (Math.random()*10)).toString();
     }
 
     private String getPressure() {
-        String pressureValue = Integer.valueOf((int) (Math.random()*20+750)).toString();
-        String pressureMeasure = "mmHg";
-        return pressureValue + " " + pressureMeasure;
+        return Integer.valueOf((int) (Math.random()*20+750)).toString();
     }
 }
