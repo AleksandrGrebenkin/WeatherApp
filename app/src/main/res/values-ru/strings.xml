@@ -1,12 +1,8 @@
 <resources>
     <string name="app_name">Погода</string>
-    <string name="empty_field_error">Поле не может быть пустым</string>
+    <string name="less_2_symbols_length_error">Поле не может быть меньше 2 символов</string>
 
 <!--    Main-->
-    <string name="celsius">℃</string>
-    <string name="fahrenheit">℉</string>
-    <string name="meter_per_second">м/с</string>
-    <string name="mm_of_mercury">мм рт. ст.</string>
     <string name="cities_content_description">Список городов</string>
     <string name="settings_content_description">Настройки</string>
 
@@ -14,15 +10,20 @@
     <string name="cities">Города</string>
     <string name="enter_city_name">Введите город</string>
     <string name="find">Найти</string>
-    <string-array name="cities">
-        <item>Москва</item>
-        <item>Берлин</item>
-        <item>Париж</item>
-    </string-array>
+    <string name="empty_data">Результат пустой</string>
 
 <!--    Settings-->
     <string name="settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
     <string name="pressure">Давление</string>
     <string name="wind">Ветер</string>
+    <string name="cities_info_message">Введите название города и выберите из списка</string>
+
+<!--    Measure units-->
+    <string name="celsius">℃</string>
+    <string name="fahrenheit">℉</string>
+    <string name="meter_per_second">м/с</string>
+    <string name="mm_of_mercury">мм рт. ст.</string>
+    <string name="in_of_mercury">дюйм рт.ст.</string>
+
 </resources>

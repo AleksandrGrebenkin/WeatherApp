@@ -49,13 +49,26 @@
         app:layout_constraintStart_toEndOf="@id/action_cities__til_city_name"
         app:layout_constraintTop_toTopOf="@id/action_cities__til_city_name" />
 
-    <ListView
-        android:id="@+id/activity_cities__lv_cities"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_cities__rv_cities"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/default_margin"
-        android:entries="@array/cities"
         android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action_cities__til_city_name" />
+
+    <TextView
+        android:id="@+id/activity_cities__tv_empty_data"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/default_margin"
+        android:gravity="center"
+        android:text="@string/empty_data"
+        android:textSize="@dimen/default_text_size"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

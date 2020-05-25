@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.alexandrgrebenkin.weatherapp.R;
 import com.github.alexandrgrebenkin.weatherapp.data.DayWeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.Utils;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.List;
@@ -20,7 +22,7 @@ public class WeekInfo extends RecyclerView.Adapter<WeekInfo.ViewHolder> {
 
     private List<DayWeatherInfo> weekForecastList;
 
-    public WeekInfo(List<DayWeatherInfo> weekForecastList) {
+    WeekInfo(List<DayWeatherInfo> weekForecastList) {
         this.weekForecastList = weekForecastList;
     }
 
@@ -44,14 +46,14 @@ public class WeekInfo extends RecyclerView.Adapter<WeekInfo.ViewHolder> {
         return weekForecastList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private TextView dayOfWeek;
         private TextView date;
         private TextView maxTemperature;
         private TextView minTemperature;
         private Locale locale;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             dayOfWeek = itemView.findViewById(R.id.day_info_item__tv_day_of_week);
             date = itemView.findViewById(R.id.day_info_item__tv_date);
@@ -61,12 +63,21 @@ public class WeekInfo extends RecyclerView.Adapter<WeekInfo.ViewHolder> {
         }
 
         private void bind(DayWeatherInfo dayWeatherInfo) {
-            dayOfWeek.setText(dayWeatherInfo.getDate().getDayOfWeek()
-                    .getDisplayName(TextStyle.FULL, locale));
-            date.setText(dayWeatherInfo.getDate()
-                    .format(DateTimeFormatter.ofPattern("dd MMMM", locale)));
-            maxTemperature.setText(dayWeatherInfo.getTempMaxC());
-            minTemperature.setText(dayWeatherInfo.getTempMinC());
+            LocalDate localDate = LocalDate.parse(dayWeatherInfo.getDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            String dayOfWeekStr = localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, locale);
+            this.dayOfWeek.setText(dayOfWeekStr);
+            String dateStr = localDate.format(DateTimeFormatter.ofPattern("dd MMMM", locale));
+            this.date.setText(dateStr);
+            String maxTempC = Utils.getRoundValueFromFloat(dayWeatherInfo.getTempMaxC());
+            if (dayWeatherInfo.getTempMaxC() > 0) {
+                maxTempC = "+" + maxTempC;
+            }
+            this.maxTemperature.setText(maxTempC);
+            String minTempC = Utils.getRoundValueFromFloat(dayWeatherInfo.getTempMinC());
+            if (dayWeatherInfo.getTempMinC() > 0) {
+                minTempC = "+" + minTempC;
+            }
+            this.minTemperature.setText(minTempC);
         }
     }
 }

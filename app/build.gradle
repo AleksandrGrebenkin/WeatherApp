@@ -14,6 +14,17 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildTypes.each {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("apikey.properties").newDataInputStream())
+        def weatherAppId = properties.getProperty("weather_app_id", "")
+        it.buildConfigField "String", "WEATHER_APP_ID", weatherAppId
+        def weatherAppKey = properties.getProperty("weather_app_key", "")
+        it.buildConfigField "String", "WEATHER_APP_KEY", weatherAppKey
+        def locationToken = properties.getProperty("locationiq_token", "")
+        it.buildConfigField "String", "LOCATION_TOKEN", locationToken
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -38,4 +49,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
