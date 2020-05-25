@@ -2,6 +2,7 @@ package com.github.alexandrgrebenkin.weatherapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
@@ -15,10 +16,12 @@ import com.github.alexandrgrebenkin.weatherapp.data.providers.implementation.Int
 import com.github.alexandrgrebenkin.weatherapp.data.Place;
 import com.github.alexandrgrebenkin.weatherapp.data.providers.PlacesProvider;
 import com.github.alexandrgrebenkin.weatherapp.R;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +29,7 @@ import java.util.List;
 
 public class CitiesActivity extends BaseActivity {
     private static final String PLACE_LIST = "com.github.alexandrgrebenkin.weatherapp.PLACE_LIST";
+
 
     private TextInputEditText cityName;
     private TextInputLayout cityNameLayout;
@@ -58,6 +62,17 @@ public class CitiesActivity extends BaseActivity {
     private void checkEmpty(TextView et, TextInputLayout textInputLayout) {
         if (et.getText().toString().length() < 2) {
             String error = getResources().getString(R.string.less_2_symbols_length_error);
+            hasErrors = true;
+            textInputLayout.setError(error);
+        } else {
+            hasErrors = false;
+            textInputLayout.setError(null);
+        }
+    }
+
+    private void checkEmpty(TextView et, TextInputLayout textInputLayout) {
+        if (et.getText().toString().isEmpty()) {
+            String error = getResources().getString(R.string.empty_field_error);
             hasErrors = true;
             textInputLayout.setError(error);
         } else {
