@@ -1,8 +1,8 @@
-package com.github.alexandrgrebenkin.weatherapp.data;
+package com.github.alexandrgrebenkin.weatherapp.data.implementation.webservice.weather;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DayWeatherInfo {
+class DayWeatherRequest {
 
     @SerializedName("date")
     private String date;
@@ -58,212 +58,212 @@ public class DayWeatherInfo {
     private float pressureMinMillibars;
 
 
-    public String getDate() {
+    String getDate() {
         return date;
     }
 
-    public String getSunriseTime() {
+    String getSunriseTime() {
         return sunriseTime;
     }
 
-    public String getSunsetTime() {
+    String getSunsetTime() {
         return sunsetTime;
     }
 
-    public String getMoonriseTime() {
+    String getMoonriseTime() {
         return moonriseTime;
     }
 
-    public String getMoonsetTime() {
+    String getMoonsetTime() {
         return moonsetTime;
     }
 
-    public float getTempMaxC() {
+    float getTempMaxC() {
         return tempMaxC;
     }
 
-    public float getTempMaxF() {
+    float getTempMaxF() {
         return tempMaxF;
     }
 
-    public float getTempMinC() {
+    float getTempMinC() {
         return tempMinC;
     }
 
-    public float getTempMinF() {
+    float getTempMinF() {
         return tempMinF;
     }
 
-    public float getPrecipitationTotalMillimeters() {
+    float getPrecipitationTotalMillimeters() {
         return precipitationTotalMillimeters;
     }
 
-    public float getPrecipitationTotalInches() {
+    float getPrecipitationTotalInches() {
         return precipitationTotalInches;
     }
 
-    public float getRainTotalMillimeters() {
+    float getRainTotalMillimeters() {
         return rainTotalMillimeters;
     }
 
-    public float getRainTotalInches() {
+    float getRainTotalInches() {
         return rainTotalInches;
     }
 
-    public float getSnowTotalMillimeters() {
+    float getSnowTotalMillimeters() {
         return snowTotalMillimeters;
     }
 
-    public float getSnowTotalInches() {
+    float getSnowTotalInches() {
         return snowTotalInches;
     }
 
-    public float getProbablyPrecipitationPercent() {
+    float getProbablyPrecipitationPercent() {
         return probablyPrecipitationPercent;
     }
 
-    public float getHumidityMaxPercent() {
+    float getHumidityMaxPercent() {
         return humidityMaxPercent;
     }
 
-    public float getHumidityMinPercent() {
+    float getHumidityMinPercent() {
         return humidityMinPercent;
     }
 
-    public float getWindSpeedMaxMPH() {
+    float getWindSpeedMaxMPH() {
         return windSpeedMaxMPH;
     }
 
-    public float getWindSpeedMaxKmH() {
+    float getWindSpeedMaxKmH() {
         return windSpeedMaxKmH;
     }
 
-    public float getWindSpeedMaxKnots() {
+    float getWindSpeedMaxKnots() {
         return windSpeedMaxKnots;
     }
 
-    public float getWindSpeedMaxMS() {
+    float getWindSpeedMaxMS() {
         return windSpeedMaxMS;
     }
 
-    public float getPressureMaxInches() {
+    float getPressureMaxInches() {
         return pressureMaxInches;
     }
 
-    public float getPressureMaxMillibars() {
+    float getPressureMaxMillibars() {
         return pressureMaxMillibars;
     }
 
-    public float getPressureMinInches() {
+    float getPressureMinInches() {
         return pressureMinInches;
     }
 
-    public float getPressureMinMillibars() {
+    float getPressureMinMillibars() {
         return pressureMinMillibars;
     }
 
 
-    public void setDate(String date) {
+    void setDate(String date) {
         this.date = date;
     }
 
-    public void setSunriseTime(String sunriseTime) {
+    void setSunriseTime(String sunriseTime) {
         this.sunriseTime = sunriseTime;
     }
 
-    public void setSunsetTime(String sunsetTime) {
+    void setSunsetTime(String sunsetTime) {
         this.sunsetTime = sunsetTime;
     }
 
-    public void setMoonriseTime(String moonriseTime) {
+    void setMoonriseTime(String moonriseTime) {
         this.moonriseTime = moonriseTime;
     }
 
-    public void setMoonsetTime(String moonsetTime) {
+    void setMoonsetTime(String moonsetTime) {
         this.moonsetTime = moonsetTime;
     }
 
-    public void setTempMaxC(float tempMaxC) {
+    void setTempMaxC(float tempMaxC) {
         this.tempMaxC = tempMaxC;
     }
 
-    public void setTempMaxF(float tempMaxF) {
+    void setTempMaxF(float tempMaxF) {
         this.tempMaxF = tempMaxF;
     }
 
-    public void setTempMinC(float tempMinC) {
+    void setTempMinC(float tempMinC) {
         this.tempMinC = tempMinC;
     }
 
-    public void setTempMinF(float tempMinF) {
+    void setTempMinF(float tempMinF) {
         this.tempMinF = tempMinF;
     }
 
-    public void setPrecipitationTotalMillimeters(float precipitationTotalMillimeters) {
+    void setPrecipitationTotalMillimeters(float precipitationTotalMillimeters) {
         this.precipitationTotalMillimeters = precipitationTotalMillimeters;
     }
 
-    public void setPrecipitationTotalInches(float precipitationTotalInches) {
+    void setPrecipitationTotalInches(float precipitationTotalInches) {
         this.precipitationTotalInches = precipitationTotalInches;
     }
 
-    public void setRainTotalMillimeters(float rainTotalMillimeters) {
+    void setRainTotalMillimeters(float rainTotalMillimeters) {
         this.rainTotalMillimeters = rainTotalMillimeters;
     }
 
-    public void setRainTotalInches(float rainTotalInches) {
+    void setRainTotalInches(float rainTotalInches) {
         this.rainTotalInches = rainTotalInches;
     }
 
-    public void setSnowTotalMillimeters(float snowTotalMillimeters) {
+    void setSnowTotalMillimeters(float snowTotalMillimeters) {
         this.snowTotalMillimeters = snowTotalMillimeters;
     }
 
-    public void setSnowTotalInches(float snowTotalInches) {
+    void setSnowTotalInches(float snowTotalInches) {
         this.snowTotalInches = snowTotalInches;
     }
 
-    public void setProbablyPrecipitationPercent(float probablyPrecipitationPercent) {
+    void setProbablyPrecipitationPercent(float probablyPrecipitationPercent) {
         this.probablyPrecipitationPercent = probablyPrecipitationPercent;
     }
 
-    public void setHumidityMaxPercent(float humidityMaxPercent) {
+    void setHumidityMaxPercent(float humidityMaxPercent) {
         this.humidityMaxPercent = humidityMaxPercent;
     }
 
-    public void setHumidityMinPercent(float humidityMinPercent) {
+    void setHumidityMinPercent(float humidityMinPercent) {
         this.humidityMinPercent = humidityMinPercent;
     }
 
-    public void setWindSpeedMaxMPH(float windSpeedMaxMPH) {
+    void setWindSpeedMaxMPH(float windSpeedMaxMPH) {
         this.windSpeedMaxMPH = windSpeedMaxMPH;
     }
 
-    public void setWindSpeedMaxKmH(float windSpeedMaxKmH) {
+    void setWindSpeedMaxKmH(float windSpeedMaxKmH) {
         this.windSpeedMaxKmH = windSpeedMaxKmH;
     }
 
-    public void setWindSpeedMaxKnots(float windSpeedMaxKnots) {
+    void setWindSpeedMaxKnots(float windSpeedMaxKnots) {
         this.windSpeedMaxKnots = windSpeedMaxKnots;
     }
 
-    public void setWindSpeedMaxMS(float windSpeedMaxMS) {
+    void setWindSpeedMaxMS(float windSpeedMaxMS) {
         this.windSpeedMaxMS = windSpeedMaxMS;
     }
 
-    public void setPressureMaxInches(float pressureMaxInches) {
+    void setPressureMaxInches(float pressureMaxInches) {
         this.pressureMaxInches = pressureMaxInches;
     }
 
-    public void setPressureMaxMillibars(float pressureMaxMillibars) {
+    void setPressureMaxMillibars(float pressureMaxMillibars) {
         this.pressureMaxMillibars = pressureMaxMillibars;
     }
 
-    public void setPressureMinInches(float pressureMinInches) {
+    void setPressureMinInches(float pressureMinInches) {
         this.pressureMinInches = pressureMinInches;
     }
 
-    public void setPressureMinMillibars(float pressureMinMillibars) {
+    void setPressureMinMillibars(float pressureMinMillibars) {
         this.pressureMinMillibars = pressureMinMillibars;
     }
 }

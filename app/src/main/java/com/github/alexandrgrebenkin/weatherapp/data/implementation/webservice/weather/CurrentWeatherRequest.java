@@ -1,8 +1,8 @@
-package com.github.alexandrgrebenkin.weatherapp.data;
+package com.github.alexandrgrebenkin.weatherapp.data.implementation.webservice.weather;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CurrentWeatherRequest {
+class CurrentWeatherRequest {
     @SerializedName("lat")
     private float latitude;
     @SerializedName("lon")
@@ -49,173 +49,173 @@ public class CurrentWeatherRequest {
 
     // Getter Methods
 
-    public float getLatitude() {
+    float getLatitude() {
         return latitude;
     }
 
-    public float getLongitude() {
+    float getLongitude() {
         return longitude;
     }
 
-    public String getWeatherDescription() {
+    String getWeatherDescription() {
         return weatherDescription;
     }
 
-    public float getWeatherCode() {
+    float getWeatherCode() {
         return weatherCode;
     }
 
-    public String getWeatherIcon() {
+    String getWeatherIcon() {
         return weatherIcon;
     }
 
-    public float getTempC() {
+    float getTempC() {
         return tempC;
     }
 
-    public float getTempF() {
+    float getTempF() {
         return tempF;
     }
 
-    public float getFeelsLikeC() {
+    float getFeelsLikeC() {
         return feelsLikeC;
     }
 
-    public float getFeelLikeF() {
+    float getFeelLikeF() {
         return feelLikeF;
     }
 
-    public float getHumidityPercent() {
+    float getHumidityPercent() {
         return humidityPercent;
     }
 
-    public float getWindSpeedMPH() {
+    float getWindSpeedMPH() {
         return windSpeedMPH;
     }
 
-    public float getWindSpeedKmH() {
+    float getWindSpeedKmH() {
         return windSpeedKmH;
     }
 
-    public float getWindSpeedKnots() {
+    float getWindSpeedKnots() {
         return windSpeedKnots;
     }
 
-    public float getWindSpeedMS() {
+    float getWindSpeedMS() {
         return windSpeedMS;
     }
 
-    public float getWindDirectionDegrees() {
+    float getWindDirectionDegrees() {
         return windDirectionDegrees;
     }
 
-    public String getWindDirectionCompass() {
+    String getWindDirectionCompass() {
         return windDirectionCompass;
     }
 
-    public float getCloudAmountPercent() {
+    float getCloudAmountPercent() {
         return cloudAmountPercent;
     }
 
-    public float getVisibilityKm() {
+    float getVisibilityKm() {
         return visibilityKm;
     }
 
-    public float getVisibilityMi() {
+    float getVisibilityMi() {
         return visibilityMi;
     }
 
-    public float getPressureMillibars() {
+    float getPressureMillibars() {
         return pressureMillibars;
     }
 
-    public float getPressureInches() {
+    float getPressureInches() {
         return pressureInches;
     }
 
     // Setter Methods
 
-    public void setLatitude(float latitude) {
+    void setLatitude(float latitude) {
         this.latitude = latitude;
     }
 
-    public void setLongitude(float longitude) {
+    void setLongitude(float longitude) {
         this.longitude = longitude;
     }
 
-    public void setWeatherDescription(String weatherDescription) {
+    void setWeatherDescription(String weatherDescription) {
         this.weatherDescription = weatherDescription;
     }
 
-    public void setWeatherCode(float weatherCode) {
+    void setWeatherCode(float weatherCode) {
         this.weatherCode = weatherCode;
     }
 
-    public void setWeatherIcon(String weatherIcon) {
+    void setWeatherIcon(String weatherIcon) {
         this.weatherIcon = weatherIcon;
     }
 
-    public void setTempC(float tempC) {
+    void setTempC(float tempC) {
         this.tempC = tempC;
     }
 
-    public void setTempF(float tempF) {
+    void setTempF(float tempF) {
         this.tempF = tempF;
     }
 
-    public void setFeelsLikeC(float feelsLikeC) {
+    void setFeelsLikeC(float feelsLikeC) {
         this.feelsLikeC = feelsLikeC;
     }
 
-    public void setFeelLikeF(float feelLikeF) {
+    void setFeelLikeF(float feelLikeF) {
         this.feelLikeF = feelLikeF;
     }
 
-    public void setHumidityPercent(float humidityPercent) {
+    void setHumidityPercent(float humidityPercent) {
         this.humidityPercent = humidityPercent;
     }
 
-    public void setWindSpeedMPH(float windSpeedMPH) {
+    void setWindSpeedMPH(float windSpeedMPH) {
         this.windSpeedMPH = windSpeedMPH;
     }
 
-    public void setWindSpeedKmH(float windSpeedKmH) {
+    void setWindSpeedKmH(float windSpeedKmH) {
         this.windSpeedKmH = windSpeedKmH;
     }
 
-    public void setWindSpeedKnots(float windSpeedKnots) {
+    void setWindSpeedKnots(float windSpeedKnots) {
         this.windSpeedKnots = windSpeedKnots;
     }
 
-    public void setWindSpeedMS(float windSpeedMS) {
+    void setWindSpeedMS(float windSpeedMS) {
         this.windSpeedMS = windSpeedMS;
     }
 
-    public void setWindDirectionDegrees(float windDirectionDegrees) {
+    void setWindDirectionDegrees(float windDirectionDegrees) {
         this.windDirectionDegrees = windDirectionDegrees;
     }
 
-    public void setWindDirectionCompass(String windDirectionCompass) {
+    void setWindDirectionCompass(String windDirectionCompass) {
         this.windDirectionCompass = windDirectionCompass;
     }
 
-    public void setCloudAmountPercent(float cloudAmountPercent) {
+    void setCloudAmountPercent(float cloudAmountPercent) {
         this.cloudAmountPercent = cloudAmountPercent;
     }
 
-    public void setVisibilityKm(float visibilityKm) {
+    void setVisibilityKm(float visibilityKm) {
         this.visibilityKm = visibilityKm;
     }
 
-    public void setVisibilityMi(float visibilityMi) {
+    void setVisibilityMi(float visibilityMi) {
         this.visibilityMi = visibilityMi;
     }
 
-    public void setPressureMillibars(float pressureMillibars) {
+    void setPressureMillibars(float pressureMillibars) {
         this.pressureMillibars = pressureMillibars;
     }
 
-    public void setPressureInches(float pressureInches) {
+    void setPressureInches(float pressureInches) {
         this.pressureInches = pressureInches;
     }
 }

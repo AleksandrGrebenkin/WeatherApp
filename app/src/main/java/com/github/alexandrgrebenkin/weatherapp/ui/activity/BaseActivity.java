@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.ui;
+package com.github.alexandrgrebenkin.weatherapp.ui.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

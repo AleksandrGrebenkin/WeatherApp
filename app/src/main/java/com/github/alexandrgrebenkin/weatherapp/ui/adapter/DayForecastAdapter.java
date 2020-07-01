@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.ui;
+package com.github.alexandrgrebenkin.weatherapp.ui.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,41 +9,37 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.alexandrgrebenkin.weatherapp.R;
-import com.github.alexandrgrebenkin.weatherapp.data.DayWeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.Utils;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.DayWeatherViewModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.ForecastWeatherViewModel;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
-import java.util.List;
 import java.util.Locale;
 
-public class WeekInfo extends RecyclerView.Adapter<WeekInfo.ViewHolder> {
+public class DayForecastAdapter extends RecyclerView.Adapter<DayForecastAdapter.ViewHolder> {
 
-    private List<DayWeatherInfo> weekForecastList;
+    private ForecastWeatherViewModel forecastWeather;
 
-    WeekInfo(List<DayWeatherInfo> weekForecastList) {
-        this.weekForecastList = weekForecastList;
+    public DayForecastAdapter(ForecastWeatherViewModel forecastWeather) {
+        this.forecastWeather = forecastWeather;
     }
 
     @NonNull
     @Override
-    public WeekInfo.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DayForecastAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.day_info_item, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WeekInfo.ViewHolder holder, int position) {
-        DayWeatherInfo dayWeatherInfo = weekForecastList.get(position);
-        holder.bind(dayWeatherInfo);
-        holder.itemView.setTag(dayWeatherInfo);
+    public void onBindViewHolder(@NonNull DayForecastAdapter.ViewHolder holder, int position) {
+        DayWeatherViewModel dayWeather = forecastWeather.getDayWeatherViewModelList().get(position);
+        holder.bind(dayWeather);
+        holder.itemView.setTag(dayWeather);
     }
 
     @Override
     public int getItemCount() {
-        return weekForecastList.size();
+        return forecastWeather.getDayWeatherViewModelList().size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -62,22 +58,30 @@ public class WeekInfo extends RecyclerView.Adapter<WeekInfo.ViewHolder> {
             locale = itemView.getResources().getConfiguration().getLocales().get(0);
         }
 
-        private void bind(DayWeatherInfo dayWeatherInfo) {
-            LocalDate localDate = LocalDate.parse(dayWeatherInfo.getDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        private void bind(DayWeatherViewModel dayWeather) {
+            /*
+            LocalDate localDate = LocalDate.parse(dayWeather.getDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             String dayOfWeekStr = localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, locale);
             this.dayOfWeek.setText(dayOfWeekStr);
             String dateStr = localDate.format(DateTimeFormatter.ofPattern("dd MMMM", locale));
             this.date.setText(dateStr);
-            String maxTempC = Utils.getRoundValueFromFloat(dayWeatherInfo.getTempMaxC());
-            if (dayWeatherInfo.getTempMaxC() > 0) {
+            String maxTempC = Utils.getRoundValueFromFloat(dayWeather.getTempMaxC());
+            if (dayWeather.getTempMaxC() > 0) {
                 maxTempC = "+" + maxTempC;
             }
             this.maxTemperature.setText(maxTempC);
-            String minTempC = Utils.getRoundValueFromFloat(dayWeatherInfo.getTempMinC());
-            if (dayWeatherInfo.getTempMinC() > 0) {
+            String minTempC = Utils.getRoundValueFromFloat(dayWeather.getTempMinC());
+            if (dayWeather.getTempMinC() > 0) {
                 minTempC = "+" + minTempC;
             }
             this.minTemperature.setText(minTempC);
+            */
+            date.setText(dayWeather.getDate());
+            dayOfWeek.setText(dayWeather.getDayOfWeek());
+            maxTemperature.setText(dayWeather.getMaxTemperature());
+            minTemperature.setText(dayWeather.getMinTemperature());
         }
     }
+
+
 }

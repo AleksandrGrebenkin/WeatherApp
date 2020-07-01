@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.ui;
+package com.github.alexandrgrebenkin.weatherapp.ui.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,17 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.alexandrgrebenkin.weatherapp.R;
-import com.github.alexandrgrebenkin.weatherapp.data.Place;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.PlaceViewModel;
 
 import java.util.List;
 
 public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> {
 
-    private List<Place> places;
+    private List<PlaceViewModel> placeViewModelList;
     private OnItemClickListener itemClickListener;
 
-    public PlaceAdapter(List<Place> places) {
-        this.places = places;
+    public PlaceAdapter(List<PlaceViewModel> placeViewModelList) {
+        this.placeViewModelList = placeViewModelList;
     }
 
     @NonNull
@@ -32,14 +32,14 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull PlaceAdapter.ViewHolder holder, int position) {
-        Place place = places.get(position);
-        holder.bind(place);
-        holder.itemView.setTag(place);
+        PlaceViewModel placeViewModel = placeViewModelList.get(position);
+        holder.bind(placeViewModel);
+        holder.itemView.setTag(placeViewModel);
     }
 
     @Override
     public int getItemCount() {
-        return places.size();
+        return placeViewModelList.size();
     }
 
     public interface OnItemClickListener {
@@ -59,8 +59,8 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
             startOnClickListener();
         }
 
-        private void bind(Place place) {
-            city.setText(place.getDisplayName());
+        private void bind(PlaceViewModel placeViewModel) {
+            city.setText(placeViewModel.getDisplayName());
         }
 
         private void startOnClickListener() {

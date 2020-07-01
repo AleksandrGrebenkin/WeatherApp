@@ -1,13 +1,10 @@
-package com.github.alexandrgrebenkin.weatherapp.data.providers.implementation;
+package com.github.alexandrgrebenkin.weatherapp.data.implementation.webservice.place;
 
-import android.os.LocaleList;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.github.alexandrgrebenkin.weatherapp.BuildConfig;
-import com.github.alexandrgrebenkin.weatherapp.data.Place;
-import com.github.alexandrgrebenkin.weatherapp.data.Utils;
-import com.github.alexandrgrebenkin.weatherapp.data.providers.PlacesProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.Place;
+import com.github.alexandrgrebenkin.weatherapp.data.provider.PlacesProvider;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -18,6 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -30,6 +28,22 @@ public class InternetPlaceProvider implements PlacesProvider {
     @Override
     public List<Place> getPlaces(String cityName) {
         List<Place> places = new ArrayList<>();
+        for (PlaceRequest placeRequest : getPlaceRequestArray(cityName)) {
+            if (placeRequest.getPlaceClass().equals("place")
+                    && placeRequest.getOsmType().equals("relation")) {
+                Place place = new Place();
+                place.setName(placeRequest.getDisplayName().split(",")[0]);
+                place.setDisplayName(placeRequest.getDisplayName());
+                place.setLat(placeRequest.getLat());
+                place.setLon(placeRequest.getLon());
+                places.add(place);
+            }
+        }
+        return places;
+    }
+
+    private PlaceRequest[] getPlaceRequestArray(String cityName) {
+        PlaceRequest[] placeRequests = null;
         try {
             String placesUrl = PLACES_URL
                     .replace("{PLACE}", cityName)
@@ -42,14 +56,9 @@ public class InternetPlaceProvider implements PlacesProvider {
                 urlConnection.setReadTimeout(10_000);
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(urlConnection.getInputStream()));
-                String result = Utils.getLines(in);
+                String result = getLines(in);
                 Gson gson = new Gson();
-                final Place[] objects = gson.fromJson(result, Place[].class);
-                for (Place place : objects) {
-                    if (place.getPlaceClass().equals("place") && place.getOsmType().equals("relation")) {
-                        places.add(place);
-                    }
-                }
+                placeRequests = gson.fromJson(result, PlaceRequest[].class);
             } catch (IOException e) {
                 Log.e(TAG, "Failed connection:" + e.getMessage());
                 e.printStackTrace();
@@ -62,6 +71,10 @@ public class InternetPlaceProvider implements PlacesProvider {
             Log.e(TAG, "Incorrect URL");
             e.printStackTrace();
         }
-        return places;
+        return placeRequests;
+    }
+
+    private String getLines(BufferedReader in) {
+        return in.lines().collect(Collectors.joining("\n"));
     }
 }

@@ -1,20 +1,20 @@
-package com.github.alexandrgrebenkin.weatherapp.ui;
+package com.github.alexandrgrebenkin.weatherapp.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.alexandrgrebenkin.weatherapp.data.PlaceInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.providers.implementation.InternetPlaceProvider;
-import com.github.alexandrgrebenkin.weatherapp.data.Place;
-import com.github.alexandrgrebenkin.weatherapp.data.providers.PlacesProvider;
+import com.github.alexandrgrebenkin.weatherapp.ui.presenter.PlacePresenter;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.PlaceViewModel;
 import com.github.alexandrgrebenkin.weatherapp.R;
+import com.github.alexandrgrebenkin.weatherapp.ui.adapter.PlaceAdapter;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -33,7 +33,7 @@ public class CitiesActivity extends BaseActivity {
     private RecyclerView cities;
     private TextView emptyData;
 
-    private List<Place> placeList;
+    private List<PlaceViewModel> placeViewModelList;
 
     private boolean hasErrors;
 
@@ -72,21 +72,23 @@ public class CitiesActivity extends BaseActivity {
             if (hasErrors) {
                 return;
             }
-            final Handler handler = new Handler();
+            Toast.makeText(getApplicationContext(), "I'm Clicked", Toast.LENGTH_SHORT).show();
+            Handler handler = new Handler();
             new Thread(() -> {
-                PlacesProvider provider = new InternetPlaceProvider();
-                List<Place> places = provider.getPlaces(cityName.getText().toString());
+                PlacePresenter placePresenter = new PlacePresenter();
+                String placeName = cityName.getText().toString();
+                List<PlaceViewModel> placeViewModelList = placePresenter.getPlaces(placeName);
                 handler.post(() -> {
-                    refreshList(places);
+                    refreshPlaceList(placeViewModelList);
                 });
             }).start();
         });
     }
 
-    private void refreshList(List<Place> places) {
-        placeList = places;
+    private void refreshPlaceList(List<PlaceViewModel> placeViewModelList) {
+        this.placeViewModelList = placeViewModelList;
         checkPlaceData();
-        PlaceAdapter placeAdapter = new PlaceAdapter(placeList);
+        PlaceAdapter placeAdapter = new PlaceAdapter(this.placeViewModelList);
         cities.setAdapter(placeAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -94,25 +96,22 @@ public class CitiesActivity extends BaseActivity {
         cities.setLayoutManager(layoutManager);
 
         placeAdapter.setOnItemClickListener((view, position) -> {
-            Place place = places.get(position);
-            PlaceInfo placeInfo = new PlaceInfo(place.getDisplayName().split(",")[0],
-                    place.getLat(), place.getLon());
-            pushCityInfoIntentResult(placeInfo);
+            pushCityInfoIntentResult(placeViewModelList.get(position));
         });
     }
 
-    private void pushCityInfoIntentResult(PlaceInfo placeInfo) {
+    private void pushCityInfoIntentResult(PlaceViewModel placeViewModel) {
         if (hasErrors) {
             return;
         }
         Intent intentResult = new Intent();
-        intentResult.putExtra(MainActivity.PLACE_INFO, placeInfo);
+        intentResult.putExtra(MainActivity.PLACE, placeViewModel);
         setResult(RESULT_OK, intentResult);
         finish();
     }
 
     private void checkPlaceData() {
-        if (placeList == null || placeList.isEmpty()) {
+        if (placeViewModelList == null || placeViewModelList.isEmpty()) {
             cities.setVisibility(View.GONE);
             emptyData.setVisibility(View.VISIBLE);
         } else {
@@ -124,19 +123,19 @@ public class CitiesActivity extends BaseActivity {
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Place[] placeArray = (Place[]) savedInstanceState.getParcelableArray(PLACE_LIST);
+        PlaceViewModel[] placeArray = (PlaceViewModel[]) savedInstanceState.getParcelableArray(PLACE_LIST);
         if (placeArray != null) {
-            refreshList(Arrays.asList(placeArray));
+            refreshPlaceList(Arrays.asList(placeArray));
         }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (placeList != null) {
-            Place[] placeArray = new Place[placeList.size()];
-            placeList.toArray(placeArray);
-            outState.putParcelableArray(PLACE_LIST, placeArray);
+        if (placeViewModelList != null) {
+            PlaceViewModel[] placeViewModelArray = new PlaceViewModel[placeViewModelList.size()];
+            placeViewModelList.toArray(placeViewModelArray);
+            outState.putParcelableArray(PLACE_LIST, placeViewModelArray);
         }
     }
 }

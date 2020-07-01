@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.ui;
+package com.github.alexandrgrebenkin.weatherapp.ui.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -12,21 +12,19 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.alexandrgrebenkin.weatherapp.data.CurrentWeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.DayWeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.PlaceInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.providers.implementation.InternetWeatherProvider;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.PlaceViewModel;
 import com.github.alexandrgrebenkin.weatherapp.R;
-import com.github.alexandrgrebenkin.weatherapp.data.providers.WeatherProvider;
-
-import java.util.List;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.CurrentWeatherViewModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.adapter.DayForecastAdapter;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.ForecastWeatherViewModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.presenter.WeatherPresenter;
 
 public class MainActivity extends BaseActivity {
 
-    private final static int REQUEST_CITY_CODE_ACTIVITY = 1;
-    private final static int SETTING_CODE = 101;
+    private static final int REQUEST_CITY_CODE_ACTIVITY = 1;
+    private static final int SETTING_CODE = 101;
 
-    final static String PLACE_INFO = "com.github.alexandrgrebenkin.weatherapp.PLACE_INFO";
+    static final String PLACE = "com.github.alexandrgrebenkin.weatherapp.PLACE";
 
     private TextView city;
     private TextView temperature;
@@ -38,16 +36,25 @@ public class MainActivity extends BaseActivity {
 
     private RecyclerView dayOfWeekRecyclerView;
 
-    private WeatherProvider weatherProvider;
-    private PlaceInfo placeInfo;
+    private WeatherPresenter weatherPresenter;
+    private PlaceViewModel placeViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState == null) {
+            placeViewModel = new PlaceViewModel();
+            placeViewModel.setName("Moscow");
+            placeViewModel.setDisplayName("Moscow");
+            placeViewModel.setLat("55.7504461");
+            placeViewModel.setLon("37.6174943");
+        }
+
         initialize();
-        updateWeather(null);
+        updateWeather(placeViewModel);
         startCitiesClickListener();
         startSettingsClickListener();
         startCityClickListener();
@@ -61,7 +68,7 @@ public class MainActivity extends BaseActivity {
         citiesList = findViewById(R.id.activity_main__ib_citiesList);
         settings = findViewById(R.id.activity_main__ib_settings);
         dayOfWeekRecyclerView = findViewById(R.id.activity_main__rv_day_info);
-        weatherProvider = new InternetWeatherProvider();
+        weatherPresenter = new WeatherPresenter(getResources());
     }
 
     private void startCitiesClickListener() {
@@ -87,19 +94,9 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void updateWeekForecast(){
-        Handler handler = new Handler();
-        new Thread(() -> {
-            List<DayWeatherInfo> dayWeatherInfoList = weatherProvider.getForecastWeatherInfo(placeInfo);
-            handler.post(() -> {
-                setupDayOfWeekRecyclerView(dayWeatherInfoList);
-            });
-        }).start();
-    }
-
-    private void setupDayOfWeekRecyclerView(List<DayWeatherInfo> dayWeatherInfoList) {
-        WeekInfo weekInfo = new WeekInfo(dayWeatherInfoList);
-        dayOfWeekRecyclerView.setAdapter(weekInfo);
+    private void updateForecastWeather(ForecastWeatherViewModel forecastWeatherViewModel) {
+        DayForecastAdapter dayForecastAdapter = new DayForecastAdapter(forecastWeatherViewModel);
+        dayOfWeekRecyclerView.setAdapter(dayForecastAdapter);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -115,52 +112,43 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CITY_CODE_ACTIVITY && resultCode == RESULT_OK) {
-            PlaceInfo placeInfo = data.getParcelableExtra(PLACE_INFO);
-            updateWeather(placeInfo);
+            PlaceViewModel placeViewModel = data.getParcelableExtra(PLACE);
+            updateWeather(placeViewModel);
         }
         if (requestCode == SETTING_CODE) {
             recreate();
         }
     }
 
-    private void updateWeather(PlaceInfo placeInfo) {
-        if (placeInfo == null) {
-            placeInfo = new PlaceInfo("Moscow", "55.7504461", "37.6174943");
-        }
-        this.placeInfo = placeInfo;
+    private void updateWeather(PlaceViewModel placeViewModel) {
+        this.placeViewModel = placeViewModel;
         Handler handler = new Handler();
-        PlaceInfo finalPlaceInfo = placeInfo;
         new Thread(() -> {
-            CurrentWeatherInfo currentWeatherInfo = weatherProvider.getCurrentWeatherInfo(finalPlaceInfo);
+            CurrentWeatherViewModel currentWeather = weatherPresenter.getCurrentWeather(placeViewModel);
+            ForecastWeatherViewModel forecastWeather = weatherPresenter.getForecastWeather(placeViewModel);
             handler.post(() -> {
-                updateViewData(currentWeatherInfo);
+                updateCurrentWeather(currentWeather);
+                updateForecastWeather(forecastWeather);
             });
         }).start();
-
     }
 
-    private void updateViewData(CurrentWeatherInfo currentWeatherInfo) {
-        this.city.setText(currentWeatherInfo.getCityName());
-        String temp = currentWeatherInfo.getTempCelsius() + getString(R.string.celsius);
-        this.temperature.setText(temp);
-        String windSpeed =  currentWeatherInfo.getWindSpeedMS() + " " + getString(R.string.meter_per_second);
-        this.wind.setText(windSpeed);
-        String pressure = currentWeatherInfo.getPressureMm() + " " + getString(R.string.mm_of_mercury);
-        this.pressure.setText(pressure);
-        updateWeekForecast();
+    private void updateCurrentWeather(CurrentWeatherViewModel currentWeatherViewModel) {
+        this.city.setText(currentWeatherViewModel.getCityName());
+        this.temperature.setText(currentWeatherViewModel.getTemperature());
+        this.wind.setText(currentWeatherViewModel.getWindSpeed());
+        this.pressure.setText(currentWeatherViewModel.getPressure());
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null) {
-            updateWeather(savedInstanceState.getParcelable(PLACE_INFO));
-        }
+        updateWeather(savedInstanceState.getParcelable(PLACE));
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(PLACE_INFO, placeInfo);
+        outState.putParcelable(PLACE, placeViewModel);
     }
 }

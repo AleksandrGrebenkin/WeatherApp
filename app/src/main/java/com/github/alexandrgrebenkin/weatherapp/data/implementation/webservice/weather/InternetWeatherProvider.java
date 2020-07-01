@@ -1,15 +1,13 @@
-package com.github.alexandrgrebenkin.weatherapp.data.providers.implementation;
+package com.github.alexandrgrebenkin.weatherapp.data.implementation.webservice.weather;
 
 import android.util.Log;
 
 import com.github.alexandrgrebenkin.weatherapp.BuildConfig;
-import com.github.alexandrgrebenkin.weatherapp.data.CurrentWeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.CurrentWeatherRequest;
-import com.github.alexandrgrebenkin.weatherapp.data.DayWeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.ForecastWeatherRequest;
-import com.github.alexandrgrebenkin.weatherapp.data.PlaceInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.Utils;
-import com.github.alexandrgrebenkin.weatherapp.data.providers.WeatherProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.Place;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -19,7 +17,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class InternetWeatherProvider implements WeatherProvider {
     private static final String TAG = "WEATHER_APP";
@@ -29,24 +31,30 @@ public class InternetWeatherProvider implements WeatherProvider {
                     .replace("{APP_KEY}", BuildConfig.WEATHER_APP_KEY);
 
     @Override
-    public CurrentWeatherInfo getCurrentWeatherInfo(PlaceInfo placeInfo) {
-        CurrentWeatherRequest request = getCurrentWeatherRequest(placeInfo);
-        String tempCelsius = Utils.getRoundValueFromFloat(request.getTempC());;
-        if (request.getTempC() > 0) {
-            tempCelsius = "+" + tempCelsius;
-        }
-        String windSpeedMS = Utils.getRoundValueFromFloat(request.getWindSpeedMS());
-        String pressureMm = Utils.getRoundValueFromFloat ((float) (request.getPressureInches() * 25.4));
-        return new CurrentWeatherInfo(placeInfo.getName(), tempCelsius, windSpeedMS, pressureMm);
+    public CurrentWeather getCurrentWeather(Place place) {
+        CurrentWeatherRequest request = getCurrentWeatherRequest(place);
+        CurrentWeather currentWeather = new CurrentWeather();
+        currentWeather.setCityName(place.getName());
+        currentWeather.setTempCelsius(request.getTempC());
+        currentWeather.setWindSpeedMS(request.getWindSpeedMS());
+        currentWeather.setPressureMm(request.getPressureInches() * 25.4f);
+        return currentWeather;
     }
 
     @Override
-    public List<DayWeatherInfo> getForecastWeatherInfo(PlaceInfo placeInfo) {
+    public ForecastWeather getForecastWeather(Place place) {
+        ForecastWeatherRequest forecastRequest = getForecastWeatherRequest(place);
+        ForecastWeather forecastWeather = new ForecastWeather();
+        forecastWeather.setDayWeatherList(getDayWeatherList(forecastRequest.getDays()));
+        return forecastWeather;
+    }
+
+    private ForecastWeatherRequest getForecastWeatherRequest(Place place) {
         ForecastWeatherRequest forecastWeatherRequest = null;
         String weatherUrl = WEATHER_URL
                 .replace("{TYPE}", "forecast")
-                .replace("{LAT}", placeInfo.getLat())
-                .replace("{LON}", placeInfo.getLon());
+                .replace("{LAT}", place.getLat())
+                .replace("{LON}", place.getLon());
         try {
             final URL uri = new URL(weatherUrl);
             HttpURLConnection urlConnection = null;
@@ -57,10 +65,9 @@ public class InternetWeatherProvider implements WeatherProvider {
                 InputStream inStream = urlConnection.getInputStream();
                 InputStreamReader isr = new InputStreamReader(inStream);
                 BufferedReader in = new BufferedReader(isr);
-                String result = Utils.getLines(in);
+                String result = getLines(in);
                 Gson gson = new Gson();
-                final ForecastWeatherRequest request = gson.fromJson(result, ForecastWeatherRequest.class);
-                forecastWeatherRequest = request;
+                forecastWeatherRequest = gson.fromJson(result, ForecastWeatherRequest.class);
             } catch (IOException e) {
                 Log.e(TAG, "Failed connection:" + e.getMessage());
                 e.printStackTrace();
@@ -73,15 +80,15 @@ public class InternetWeatherProvider implements WeatherProvider {
             Log.e(TAG, "Incorrect URL");
             e.printStackTrace();
         }
-        return forecastWeatherRequest.getDays();
+        return forecastWeatherRequest;
     }
 
-    public CurrentWeatherRequest getCurrentWeatherRequest(PlaceInfo placeInfo) {
+    private CurrentWeatherRequest getCurrentWeatherRequest(Place place) {
         CurrentWeatherRequest currentWeatherRequest = null;
         String weatherUrl = WEATHER_URL
                 .replace("{TYPE}", "current")
-                .replace("{LAT}", placeInfo.getLat())
-                .replace("{LON}", placeInfo.getLon());
+                .replace("{LAT}", place.getLat())
+                .replace("{LON}", place.getLon());
         try {
             final URL uri = new URL(weatherUrl);
             HttpURLConnection urlConnection = null;
@@ -92,10 +99,9 @@ public class InternetWeatherProvider implements WeatherProvider {
                 InputStream inStream = urlConnection.getInputStream();
                 InputStreamReader isr = new InputStreamReader(inStream);
                 BufferedReader in = new BufferedReader(isr);
-                String result = Utils.getLines(in);
+                String result = getLines(in);
                 Gson gson = new Gson();
-                final CurrentWeatherRequest request = gson.fromJson(result, CurrentWeatherRequest.class);
-                currentWeatherRequest = request;
+                currentWeatherRequest = gson.fromJson(result, CurrentWeatherRequest.class);
             } catch (IOException e) {
                 Log.e(TAG, "Failed connection:" + e.getMessage());
                 e.printStackTrace();
@@ -109,5 +115,22 @@ public class InternetWeatherProvider implements WeatherProvider {
             e.printStackTrace();
         }
         return currentWeatherRequest;
+    }
+
+    private List<DayWeather> getDayWeatherList (List<DayWeatherRequest> dayWeatherRequestList) {
+        List<DayWeather> dayWeatherList = new ArrayList<>();
+        for (int i = 0; i < dayWeatherRequestList.size(); i++) {
+            DayWeatherRequest dayRequest = dayWeatherRequestList.get(i);
+            DayWeather dayWeather = new DayWeather();
+            dayWeather.setDate(LocalDate.parse(dayRequest.getDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            dayWeather.setMaxTempCelsius(dayRequest.getTempMaxC());
+            dayWeather.setMinTempCelsius(dayRequest.getTempMinC());
+            dayWeatherList.add(dayWeather);
+        }
+        return dayWeatherList;
+    }
+
+    private String getLines(BufferedReader in) {
+        return in.lines().collect(Collectors.joining("\n"));
     }
 }
