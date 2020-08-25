@@ -51,6 +51,8 @@ public class MainActivity extends BaseActivity {
             placeViewModel.setDisplayName("Moscow");
             placeViewModel.setLat("55.7504461");
             placeViewModel.setLon("37.6174943");
+        } else {
+            placeViewModel = savedInstanceState.getParcelable(PLACE);
         }
 
         initialize();
@@ -138,12 +140,6 @@ public class MainActivity extends BaseActivity {
         this.temperature.setText(currentWeatherViewModel.getTemperature());
         this.wind.setText(currentWeatherViewModel.getWindSpeed());
         this.pressure.setText(currentWeatherViewModel.getPressure());
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        updateWeather(savedInstanceState.getParcelable(PLACE));
     }
 
     @Override
