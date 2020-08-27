@@ -13,27 +13,26 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/day_info_item__tv_day_of_week"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="@dimen/default_text_size"
-            app:layout_constraintBottom_toTopOf="@id/day_info_item__tv_date"
-            app:layout_constraintEnd_toStartOf="@id/day_info_item__tv_max_temperature"
-            app:layout_constraintHorizontal_weight="50"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Monday" />
-
-        <TextView
             android:id="@+id/day_info_item__tv_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            app:layout_constraintEnd_toEndOf="@id/day_info_item__tv_day_of_week"
-            app:layout_constraintStart_toStartOf="@id/day_info_item__tv_day_of_week"
-            app:layout_constraintTop_toBottomOf="@id/day_info_item__tv_day_of_week"
+            android:textSize="@dimen/default_text_size"
+            app:layout_constraintEnd_toStartOf="@id/day_info_item__tv_max_temperature"
+            app:layout_constraintHorizontal_weight="50"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="07.05" />
+
+        <TextView
+            android:id="@+id/day_info_item__tv_day_of_week"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="@id/day_info_item__tv_date"
+            app:layout_constraintStart_toStartOf="@id/day_info_item__tv_date"
+            app:layout_constraintTop_toBottomOf="@id/day_info_item__tv_date"
+            tools:text="Monday" />
 
         <TextView
             android:id="@+id/day_info_item__tv_max_temperature"
@@ -44,7 +43,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/day_info_item__tv_min_temperature"
             app:layout_constraintHorizontal_weight="25"
-            app:layout_constraintStart_toEndOf="@id/day_info_item__tv_day_of_week"
+            app:layout_constraintStart_toEndOf="@id/day_info_item__tv_date"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="12 ℃" />
 

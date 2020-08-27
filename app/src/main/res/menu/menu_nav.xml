@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_nav__i_home"
+            android:icon="@drawable/ic_temperature_weather_svgrepo_com"
+            android:title="@string/weather" />
+
+        <item
+            android:id="@+id/menu_nav__i_search"
+            android:icon="@drawable/ic_baseline_search_24"
+            android:title="@string/search" />
+
+        <item
+            android:id="@+id/menu_nav__i_favorites"
+            android:icon="@drawable/ic_baseline_star_24"
+            android:title="@string/favorites" />
+
+        <item
+            android:id="@+id/menu_nav__i_settings"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="@string/settings" />
+
+        <item
+            android:id="@+id/menu_nav__i_feedback"
+            android:icon="@drawable/ic_baseline_email_24"
+            android:title="@string/feedback" />
+
+        <item
+            android:id="@+id/menu_nav__i_about"
+            android:icon="@drawable/ic_baseline_people_alt_24"
+            android:title="@string/about_developer" />
+
+    </group>
+
+</menu>

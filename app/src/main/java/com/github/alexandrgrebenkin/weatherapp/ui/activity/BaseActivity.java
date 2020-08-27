@@ -1,5 +1,6 @@
 package com.github.alexandrgrebenkin.weatherapp.ui.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -34,5 +35,15 @@ public class BaseActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(IsDarkTheme, isDarkTheme);
         editor.apply();
+    }
+
+    protected void restartActivity() {
+        Intent i = getIntent();
+        this.overridePendingTransition(0, 0);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        this.finish();
+        //restart the activity without animation
+        this.overridePendingTransition(0, 0);
+        this.startActivity(i);
     }
 }
