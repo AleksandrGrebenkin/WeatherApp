@@ -6,8 +6,8 @@
     <string name="cities_content_description">Список городов</string>
     <string name="settings_content_description">Настройки</string>
 
-<!--    Cities-->
-    <string name="cities">Города</string>
+<!--    Search-->
+    <string name="search">Поиск</string>
     <string name="enter_city_name">Введите город</string>
     <string name="find">Найти</string>
     <string name="empty_data">Результат пустой</string>
@@ -25,5 +25,16 @@
     <string name="meter_per_second">м/с</string>
     <string name="mm_of_mercury">мм рт. ст.</string>
     <string name="in_of_mercury">дюйм рт.ст.</string>
+
+<!--    Navigation menu-->
+    <string name="weather">Погода</string>
+    <string name="support">Поддержка</string>
+    <string name="about_developer">О разработчике</string>
+    <string name="feedback">Обратная связь</string>
+    <string name="nav_open_drawer">Open navigation drawer</string>
+    <string name="nav_close_drawer">Close navigation drawer</string>
+    <string name="favorites">Избранное</string>
+
+    <string name="empty">Здесь пока пусто</string>
 
 </resources>

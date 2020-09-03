@@ -72,10 +72,15 @@ public class WeatherPresenter {
             DayWeather dayWeather = dayWeatherList.get(i);
             DayWeatherViewModel dayWeatherViewModel = new DayWeatherViewModel();
 
-            String date = dayWeather.getDate().format(formatter);
+            String date = dayWeather
+                    .getDate()
+                    .format(formatter);
             dayWeatherViewModel.setDate(date);
 
-            String dayOfWeek = dayWeather.getDate().getDayOfWeek().getDisplayName(TextStyle.FULL, locale);
+            String dayOfWeek = dayWeather
+                    .getDate()
+                    .getDayOfWeek()
+                    .getDisplayName(TextStyle.FULL, locale);
             dayWeatherViewModel.setDayOfWeek(dayOfWeek);
 
             String maxTemperature = formatTemperature(dayWeather.getMaxTempCelsius());

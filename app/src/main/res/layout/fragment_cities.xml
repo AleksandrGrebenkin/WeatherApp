@@ -5,31 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/default_padding"
-    tools:context=".ui.activity.CitiesActivity">
-
-    <TextView
-        android:id="@+id/activity_cities__tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cities"
-        android:textSize="@dimen/title_text_size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    tools:context=".ui.fragment.CitiesFragment">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/action_cities__til_city_name"
+        android:id="@+id/fragment_cities__til_city_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_margin"
         app:errorEnabled="true"
-        app:layout_constraintEnd_toStartOf="@id/action_cities_btn_city_find"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_cities__tv_title">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/action_cities__tiet_city_name"
+            android:id="@+id/fragment_cities__tiet_city_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/enter_city_name"
@@ -38,19 +28,18 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/action_cities_btn_city_find"
+        android:id="@+id/fragment_cities_btn_city_find"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/find"
         android:textAllCaps="false"
         android:textSize="@dimen/default_text_size"
-        app:layout_constraintBottom_toBottomOf="@id/action_cities__til_city_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/action_cities__til_city_name"
-        app:layout_constraintTop_toTopOf="@id/action_cities__til_city_name" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_cities__til_city_name" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/activity_cities__rv_cities"
+        android:id="@+id/fragment_cities__rv_cities"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/default_margin"
@@ -58,10 +47,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/action_cities__til_city_name" />
+        app:layout_constraintTop_toBottomOf="@id/fragment_cities_btn_city_find" />
 
     <TextView
-        android:id="@+id/activity_cities__tv_empty_data"
+        android:id="@+id/fragment_cities__tv_empty_data"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/default_margin"
@@ -72,7 +61,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/action_cities__til_city_name" />
-
+        app:layout_constraintTop_toBottomOf="@id/fragment_cities__til_city_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

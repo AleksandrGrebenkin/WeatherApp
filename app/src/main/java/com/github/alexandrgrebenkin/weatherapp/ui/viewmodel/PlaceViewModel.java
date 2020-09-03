@@ -3,6 +3,8 @@ package com.github.alexandrgrebenkin.weatherapp.ui.viewmodel;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 public class PlaceViewModel implements Parcelable {
 
     private String name;
@@ -77,4 +79,27 @@ public class PlaceViewModel implements Parcelable {
             return new PlaceViewModel[size];
         }
     };
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        PlaceViewModel guest = (PlaceViewModel) obj;
+        return (lat == guest.lat || lat != null && lat.equals(guest.getLat()))
+                && (lon == guest.lon || lon != null && lon.equals(guest.getLon()));
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((lat == null) ? 0 : lat.hashCode());
+        result = prime * result + ((lon == null) ? 0 : lon.hashCode());
+        return result;
+    }
 }
