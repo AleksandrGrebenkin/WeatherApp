@@ -1,9 +1,9 @@
-package com.github.alexandrgrebenkin.weatherapp.data.implementation.webservice.weather;
+package com.github.alexandrgrebenkin.weatherapp.data.implementation.webservice.weatherunlocked;
 
+import android.location.Address;
 import android.util.Log;
 
 import com.github.alexandrgrebenkin.weatherapp.BuildConfig;
-import com.github.alexandrgrebenkin.weatherapp.data.entity.Place;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherProvider;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
@@ -17,9 +17,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +34,10 @@ public class InternetWeatherProvider implements WeatherProvider {
                     .replace("{APP_KEY}", BuildConfig.WEATHER_APP_KEY);
 
     @Override
-    public CurrentWeather getCurrentWeather(Place place) {
-        CurrentWeatherRequest request = getCurrentWeatherRequest(place);
+    public CurrentWeather getCurrentWeather(Address address) {
+        CurrentWeatherRequest request = getCurrentWeatherRequest(address);
         CurrentWeather currentWeather = new CurrentWeather();
-        currentWeather.setCityName(place.getName());
+        currentWeather.setCityName(address.getLocality());
         currentWeather.setTempCelsius(request.getTempC());
         currentWeather.setWindSpeedMS(request.getWindSpeedMS());
         currentWeather.setPressureMm(request.getPressureInches() * 25.4f);
@@ -42,19 +45,19 @@ public class InternetWeatherProvider implements WeatherProvider {
     }
 
     @Override
-    public ForecastWeather getForecastWeather(Place place) {
-        ForecastWeatherRequest forecastRequest = getForecastWeatherRequest(place);
+    public ForecastWeather getForecastWeather(Address address) {
+        ForecastWeatherRequest forecastRequest = getForecastWeatherRequest(address);
         ForecastWeather forecastWeather = new ForecastWeather();
         forecastWeather.setDayWeatherList(getDayWeatherList(forecastRequest.getDays()));
         return forecastWeather;
     }
 
-    private ForecastWeatherRequest getForecastWeatherRequest(Place place) {
+    private ForecastWeatherRequest getForecastWeatherRequest(Address address) {
         ForecastWeatherRequest forecastWeatherRequest = null;
         String weatherUrl = WEATHER_URL
                 .replace("{TYPE}", "forecast")
-                .replace("{LAT}", place.getLat())
-                .replace("{LON}", place.getLon());
+                .replace("{LAT}", String.valueOf(address.getLatitude()))
+                .replace("{LON}", String.valueOf(address.getLongitude()));
         try {
             final URL uri = new URL(weatherUrl);
             HttpURLConnection urlConnection = null;
@@ -83,12 +86,12 @@ public class InternetWeatherProvider implements WeatherProvider {
         return forecastWeatherRequest;
     }
 
-    private CurrentWeatherRequest getCurrentWeatherRequest(Place place) {
+    private CurrentWeatherRequest getCurrentWeatherRequest(Address address) {
         CurrentWeatherRequest currentWeatherRequest = null;
         String weatherUrl = WEATHER_URL
                 .replace("{TYPE}", "current")
-                .replace("{LAT}", place.getLat())
-                .replace("{LON}", place.getLon());
+                .replace("{LAT}", String.valueOf(address.getLatitude()))
+                .replace("{LON}", String.valueOf(address.getLongitude()));
         try {
             final URL uri = new URL(weatherUrl);
             HttpURLConnection urlConnection = null;
@@ -122,7 +125,12 @@ public class InternetWeatherProvider implements WeatherProvider {
         for (int i = 0; i < dayWeatherRequestList.size(); i++) {
             DayWeatherRequest dayRequest = dayWeatherRequestList.get(i);
             DayWeather dayWeather = new DayWeather();
-            dayWeather.setDate(LocalDate.parse(dayRequest.getDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            try {
+                dayWeather.setDate(sdf.parse(dayRequest.getDate()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             dayWeather.setMaxTempCelsius(dayRequest.getTempMaxC());
             dayWeather.setMinTempCelsius(dayRequest.getTempMinC());
             dayWeatherList.add(dayWeather);
@@ -131,6 +139,16 @@ public class InternetWeatherProvider implements WeatherProvider {
     }
 
     private String getLines(BufferedReader in) {
-        return in.lines().collect(Collectors.joining("\n"));
+        StringBuilder sb = new StringBuilder();
+        try {
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
     }
 }

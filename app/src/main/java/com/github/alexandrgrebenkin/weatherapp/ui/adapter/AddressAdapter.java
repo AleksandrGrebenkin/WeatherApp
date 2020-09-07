@@ -1,5 +1,6 @@
 package com.github.alexandrgrebenkin.weatherapp.ui.adapter;
 
+import android.location.Address;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,17 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.alexandrgrebenkin.weatherapp.R;
-import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.PlaceViewModel;
 
 import java.util.List;
 
-public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> {
+public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHolder> {
 
-    private List<PlaceViewModel> placeViewModelList;
+    private List<Address> addressList;
     private OnItemClickListener itemClickListener;
 
-    public PlaceAdapter(List<PlaceViewModel> placeViewModelList) {
-        this.placeViewModelList = placeViewModelList;
+    public AddressAdapter(List<Address> addressList) {
+        this.addressList = addressList;
     }
 
     @NonNull
@@ -31,15 +31,15 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PlaceAdapter.ViewHolder holder, int position) {
-        PlaceViewModel placeViewModel = placeViewModelList.get(position);
-        holder.bind(placeViewModel);
-        holder.itemView.setTag(placeViewModel);
+    public void onBindViewHolder(@NonNull AddressAdapter.ViewHolder holder, int position) {
+        Address address = addressList.get(position);
+        holder.bind(address);
+        holder.itemView.setTag(address);
     }
 
     @Override
     public int getItemCount() {
-        return placeViewModelList.size();
+        return addressList.size();
     }
 
     public interface OnItemClickListener {
@@ -59,8 +59,8 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
             startOnClickListener();
         }
 
-        private void bind(PlaceViewModel placeViewModel) {
-            city.setText(placeViewModel.getDisplayName());
+        private void bind(Address address) {
+            city.setText(address.getAddressLine(0));
         }
 
         private void startOnClickListener() {

@@ -47,7 +47,6 @@ public class DayForecastAdapter extends RecyclerView.Adapter<DayForecastAdapter.
         private TextView date;
         private TextView maxTemperature;
         private TextView minTemperature;
-        private Locale locale;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,27 +54,9 @@ public class DayForecastAdapter extends RecyclerView.Adapter<DayForecastAdapter.
             date = itemView.findViewById(R.id.day_info_item__tv_date);
             maxTemperature = itemView.findViewById(R.id.day_info_item__tv_max_temperature);
             minTemperature = itemView.findViewById(R.id.day_info_item__tv_min_temperature);
-            locale = itemView.getResources().getConfiguration().getLocales().get(0);
         }
 
         private void bind(DayWeatherViewModel dayWeather) {
-            /*
-            LocalDate localDate = LocalDate.parse(dayWeather.getDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            String dayOfWeekStr = localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, locale);
-            this.dayOfWeek.setText(dayOfWeekStr);
-            String dateStr = localDate.format(DateTimeFormatter.ofPattern("dd MMMM", locale));
-            this.date.setText(dateStr);
-            String maxTempC = Utils.getRoundValueFromFloat(dayWeather.getTempMaxC());
-            if (dayWeather.getTempMaxC() > 0) {
-                maxTempC = "+" + maxTempC;
-            }
-            this.maxTemperature.setText(maxTempC);
-            String minTempC = Utils.getRoundValueFromFloat(dayWeather.getTempMinC());
-            if (dayWeather.getTempMinC() > 0) {
-                minTempC = "+" + minTempC;
-            }
-            this.minTemperature.setText(minTempC);
-            */
             date.setText(dayWeather.getDate());
             dayOfWeek.setText(dayWeather.getDayOfWeek());
             maxTemperature.setText(dayWeather.getMaxTemperature());
