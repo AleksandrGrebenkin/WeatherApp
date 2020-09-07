@@ -24,7 +24,7 @@ public class AddressLoader {
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
-                EventBus.getDefault().post(new UnknownExceptionEvent());
+                EventBus.getDefault().post(new UnknownExceptionEvent(e));
             }
         }).start();
 

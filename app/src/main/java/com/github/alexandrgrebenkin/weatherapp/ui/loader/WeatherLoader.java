@@ -59,7 +59,7 @@ public class WeatherLoader {
                 CurrentWeatherLoaderEvent event = new CurrentWeatherLoaderEvent(currentWeatherViewModel);
                 EventBus.getDefault().post(event);
             } catch (Exception e) {
-                UnknownExceptionEvent event = new UnknownExceptionEvent();
+                UnknownExceptionEvent event = new UnknownExceptionEvent(e);
                 EventBus.getDefault().post(event);
             }
         }).start();
@@ -76,7 +76,7 @@ public class WeatherLoader {
                 ForecastWeatherLoaderEvent event = new ForecastWeatherLoaderEvent(forecastWeatherViewModel);
                 EventBus.getDefault().post(event);
             } catch (Exception e) {
-                UnknownExceptionEvent event = new UnknownExceptionEvent();
+                UnknownExceptionEvent event = new UnknownExceptionEvent(e);
                 EventBus.getDefault().post(event);
             }
         }).start();

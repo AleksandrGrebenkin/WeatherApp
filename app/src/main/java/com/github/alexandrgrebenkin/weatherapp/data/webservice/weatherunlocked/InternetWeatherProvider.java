@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.data.implementation.webservice.weatherunlocked;
+package com.github.alexandrgrebenkin.weatherapp.data.webservice.weatherunlocked;
 
 import android.location.Address;
 import android.util.Log;
@@ -19,12 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class InternetWeatherProvider implements WeatherProvider {
     private static final String TAG = "WEATHER_APP";

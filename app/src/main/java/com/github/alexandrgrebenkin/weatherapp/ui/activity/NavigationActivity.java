@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.github.alexandrgrebenkin.weatherapp.ui.fragment.ObjectNotFoundDialogFragment;
+import com.github.alexandrgrebenkin.weatherapp.ui.fragment.UnknownErrorDialogFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.loader.AddressLoader;
 import com.github.alexandrgrebenkin.weatherapp.ui.event.AddressLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.R;
@@ -207,7 +209,8 @@ public class NavigationActivity extends BaseActivity
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void handleEvent(AddressLoaderEvent event) {
         if (event.getAddress() == null || event.getAddress().getLocality() == null) {
-            Toast.makeText(this, "Объект не найден", Toast.LENGTH_SHORT).show();
+            ObjectNotFoundDialogFragment objectNotFound = new ObjectNotFoundDialogFragment();
+            objectNotFound.show(getSupportFragmentManager(), "objectNotFoundDialog");
         } else {
             address = event.getAddress();
             setHomeFragment();
@@ -216,6 +219,8 @@ public class NavigationActivity extends BaseActivity
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void handleEvent(UnknownExceptionEvent event) {
-        Toast.makeText(this, "Unknown error", Toast.LENGTH_SHORT).show();
+        UnknownErrorDialogFragment unknownError = UnknownErrorDialogFragment
+                .newInstance(event.getException().getMessage());
+        unknownError.show(getSupportFragmentManager(), "unknownErrorDialog");
     }
 }
