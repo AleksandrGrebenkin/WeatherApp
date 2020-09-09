@@ -38,4 +38,8 @@
 
     <string name="empty">Here is empty yet</string>
 
+    <string name="not_found_error_title">Object not found</string>
+    <string name="not_found_error">Search object not found</string>
+    <string name="unknown_error">Unknown error!</string>
+
 </resources>

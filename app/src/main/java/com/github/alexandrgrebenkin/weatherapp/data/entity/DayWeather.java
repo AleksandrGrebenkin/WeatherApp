@@ -1,13 +1,14 @@
 package com.github.alexandrgrebenkin.weatherapp.data.entity;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 public class DayWeather {
-    private LocalDate date;
+    private Date date;
     private float maxTempCelsius;
     private float minTempCelsius;
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
@@ -19,7 +20,7 @@ public class DayWeather {
         return minTempCelsius;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

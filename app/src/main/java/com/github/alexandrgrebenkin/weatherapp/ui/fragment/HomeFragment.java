@@ -1,5 +1,6 @@
 package com.github.alexandrgrebenkin.weatherapp.ui.fragment;
 
+import android.location.Address;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -9,22 +10,26 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.alexandrgrebenkin.weatherapp.ui.event.CurrentWeatherLoaderEvent;
+import com.github.alexandrgrebenkin.weatherapp.ui.event.ForecastWeatherLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.R;
 import com.github.alexandrgrebenkin.weatherapp.ui.adapter.DayForecastAdapter;
-import com.github.alexandrgrebenkin.weatherapp.ui.presenter.WeatherPresenter;
+import com.github.alexandrgrebenkin.weatherapp.ui.loader.WeatherLoader;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.CurrentWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.ForecastWeatherViewModel;
-import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.PlaceViewModel;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class HomeFragment extends Fragment {
 
-    public static final String PLACE = "com.github.alexandrgrebenkin.weatherapp.PLACE";
+    public static final String ADDRESS = "com.github.alexandrgrebenkin.weatherapp.ADDRESS";
 
     private TextView temperature;
     private TextView wind;
@@ -32,13 +37,13 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView dayOfWeekRecyclerView;
 
-    private WeatherPresenter weatherPresenter;
-    private PlaceViewModel placeViewModel;
+    private WeatherLoader weatherLoader;
+    private Address address;
 
-    public static HomeFragment newInstance(PlaceViewModel placeViewModel) {
+    public static HomeFragment newInstance(Address address) {
         HomeFragment homeFragment = new HomeFragment();
         Bundle args = new Bundle();
-        args.putParcelable(PLACE, placeViewModel);
+        args.putParcelable(ADDRESS, address);
         homeFragment.setArguments(args);
         return homeFragment;
     }
@@ -46,7 +51,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        placeViewModel = getArguments().getParcelable(PLACE);
+        address = getArguments().getParcelable(ADDRESS);
     }
 
     @Override
@@ -59,7 +64,14 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
         initialize();
-        updateWeather(placeViewModel);
+        EventBus.getDefault().register(this);
+        updateWeather();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initialize() {
@@ -69,21 +81,13 @@ public class HomeFragment extends Fragment {
             wind = view.findViewById(R.id.fragment_home__tv_wind);
             pressure = view.findViewById(R.id.fragment_home__tv_pressure);
             dayOfWeekRecyclerView = view.findViewById(R.id.fragment_home__rv_day_info);
-            weatherPresenter = new WeatherPresenter(getResources());
+            weatherLoader = new WeatherLoader(getResources());
         }
     }
 
-    private void updateWeather(PlaceViewModel placeViewModel) {
-        this.placeViewModel = placeViewModel;
-        Handler handler = new Handler();
-        new Thread(() -> {
-            CurrentWeatherViewModel currentWeather = weatherPresenter.getCurrentWeather(placeViewModel);
-            ForecastWeatherViewModel forecastWeather = weatherPresenter.getForecastWeather(placeViewModel);
-            handler.post(() -> {
-                updateCurrentWeather(currentWeather);
-                updateForecastWeather(forecastWeather);
-            });
-        }).start();
+    private void updateWeather() {
+        weatherLoader.getCurrentWeather(address);
+        weatherLoader.getForecastWeather(address);
     }
 
     private void updateCurrentWeather(CurrentWeatherViewModel currentWeatherViewModel) {
@@ -104,5 +108,15 @@ public class HomeFragment extends Fragment {
         itemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.separator));
         dayOfWeekRecyclerView.addItemDecoration(itemDecoration);
         dayOfWeekRecyclerView.setLayoutManager(layoutManager);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void handleEvent(CurrentWeatherLoaderEvent event) {
+        updateCurrentWeather(event.getCurrentWeatherViewModel());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void handleEvent(ForecastWeatherLoaderEvent event) {
+        updateForecastWeather(event.getForecastWeatherViewModel());
     }
 }

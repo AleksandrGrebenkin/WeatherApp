@@ -37,4 +37,7 @@
 
     <string name="empty">Здесь пока пусто</string>
 
+    <string name="not_found_error_title">Объект не найден</string>
+    <string name="not_found_error">Указанный объект не найден</string>
+    <string name="unknown_error">Неизвестная ошибка!</string>
 </resources>

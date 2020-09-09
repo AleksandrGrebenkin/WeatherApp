@@ -2,59 +2,69 @@ package com.github.alexandrgrebenkin.weatherapp.ui.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import android.location.Address;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
+import com.github.alexandrgrebenkin.weatherapp.ui.fragment.ObjectNotFoundDialogFragment;
+import com.github.alexandrgrebenkin.weatherapp.ui.fragment.UnknownErrorDialogFragment;
+import com.github.alexandrgrebenkin.weatherapp.ui.loader.AddressLoader;
+import com.github.alexandrgrebenkin.weatherapp.ui.event.AddressLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.R;
+import com.github.alexandrgrebenkin.weatherapp.ui.event.UnknownExceptionEvent;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.AboutDevFragment;
-import com.github.alexandrgrebenkin.weatherapp.ui.fragment.CitiesFragment;
-import com.github.alexandrgrebenkin.weatherapp.ui.fragment.FavoritesFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.FeedbackFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.HomeFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.SettingsFragment;
-import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.PlaceViewModel;
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class NavigationActivity extends BaseActivity
-        implements CitiesFragment.Listener,
-        SettingsFragment.Listener,
-        FavoritesFragment.Listener,
+        implements SettingsFragment.Listener,
         NavigationView.OnNavigationItemSelectedListener {
 
-    private PlaceViewModel placeViewModel;
     private DrawerLayout drawer;
-    private Menu menu;
-    private Toolbar toolbar;
 
-    private Set<PlaceViewModel> favorites;
+    private SearchView searchView;
+
+    private Address address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
-        toolbar = initToolbar();
+        EventBus.getDefault().register(this);
+
+        Toolbar toolbar = initToolbar();
         initDrawer(toolbar);
         initNavigationListener();
 
-        favorites = new HashSet<>();
-
         if (savedInstanceState == null) {
-            placeViewModel = getDefaultPlace();
-            setHomeFragment();
+            getDefaultAddress();
         } else {
-            placeViewModel = savedInstanceState.getParcelable(HomeFragment.PLACE);
+            address = savedInstanceState.getParcelable(HomeFragment.ADDRESS);
+            setHomeFragment();
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initDrawer(Toolbar toolbar) {
@@ -82,29 +92,16 @@ public class NavigationActivity extends BaseActivity
     }
 
     private void setHomeFragment() {
-        HomeFragment homeFragment = HomeFragment.newInstance(placeViewModel);
+        HomeFragment homeFragment = HomeFragment.newInstance(address);
         setFragment(homeFragment);
-        getSupportActionBar().setTitle(placeViewModel.getName());
-        if (menu != null) {
-            updateFavoriteIcon();
-        }
-    }
 
-    private void setSearchFragment() {
-        setFragment(new CitiesFragment());
-        getSupportActionBar().setTitle(R.string.search);
+        getSupportActionBar().setTitle(address.getLocality());
     }
 
     private void setSettingsFragment() {
         SettingsFragment settingsFragment = SettingsFragment.newInstance(isDarkTheme());
         setFragment(settingsFragment);
         getSupportActionBar().setTitle(R.string.settings);
-    }
-
-    private void setFavoritesFragment() {
-        FavoritesFragment favoritesFragment = FavoritesFragment.newInstance(favorites);
-        setFragment(favoritesFragment);
-        getSupportActionBar().setTitle(R.string.favorites);
     }
 
     private void setFeedbackFragment() {
@@ -123,41 +120,26 @@ public class NavigationActivity extends BaseActivity
                 .commit();
     }
 
-    private void optionMenuItemClick(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.menu_main__add_favorite: {
-                favorites.add(placeViewModel);
-                break;
-            }
-            case R.id.menu_main__remove_favorite: {
-                favorites.remove(placeViewModel);
-                break;
-            }
-        }
-
-        updateFavoriteIcon();
-    }
-
-    @Override
-    public void itemClicked(PlaceViewModel placeViewModel) {
-        this.placeViewModel = placeViewModel;
-        setHomeFragment();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        this.menu = menu;
-        updateFavoriteIcon();
-        return super.onCreateOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        optionMenuItemClick(item);
-        return super.onOptionsItemSelected(item);
+        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                loadAddress(query);
+                searchView.onActionViewCollapsed();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return true;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -166,14 +148,8 @@ public class NavigationActivity extends BaseActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.menu_nav__i_search:
-                setSearchFragment();
-                break;
             case R.id.menu_nav__i_settings:
                 setSettingsFragment();
-                break;
-            case R.id.menu_nav__i_favorites:
-                setFavoritesFragment();
                 break;
             case R.id.menu_nav__i_feedback:
                 setFeedbackFragment();
@@ -186,7 +162,9 @@ public class NavigationActivity extends BaseActivity
         }
 
         if (id != R.id.menu_nav__i_home) {
-            setFavoritesInvisible();
+            searchView.setVisibility(View.GONE);
+        } else {
+            searchView.setVisibility(View.VISIBLE);
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -197,7 +175,7 @@ public class NavigationActivity extends BaseActivity
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(HomeFragment.PLACE, placeViewModel);
+        outState.putParcelable(HomeFragment.ADDRESS, address);
     }
 
     @Override
@@ -206,6 +184,8 @@ public class NavigationActivity extends BaseActivity
             drawer.closeDrawer(GravityCompat.START);
         } else if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
             finish();
+        } else if (!searchView.isIconified()) {
+            searchView.onActionViewCollapsed();
         } else {
             super.onBackPressed();
         }
@@ -217,34 +197,30 @@ public class NavigationActivity extends BaseActivity
         recreate();
     }
 
-    @Override
-    public void favoriteClick(PlaceViewModel placeViewModel) {
-        this.placeViewModel = placeViewModel;
-        setHomeFragment();
+    private void getDefaultAddress() {
+        loadAddress("Москва");
     }
 
-    private PlaceViewModel getDefaultPlace() {
-        PlaceViewModel placeViewModel = new PlaceViewModel();
-        placeViewModel.setName("Москва");
-        placeViewModel.setDisplayName("Москва, Центральный административный округ, Россия");
-        placeViewModel.setLat("55.7504461");
-        placeViewModel.setLon("37.6174943");
-        return placeViewModel;
+    private void loadAddress(String query) {
+        AddressLoader addressLoader = new AddressLoader();
+        addressLoader.loadAddress(NavigationActivity.this, query);
     }
 
-    private void updateFavoriteIcon(){
-        boolean isFavorite;
-        if (favorites.contains(placeViewModel)){
-            isFavorite = true;
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void handleEvent(AddressLoaderEvent event) {
+        if (event.getAddress() == null || event.getAddress().getLocality() == null) {
+            ObjectNotFoundDialogFragment objectNotFound = new ObjectNotFoundDialogFragment();
+            objectNotFound.show(getSupportFragmentManager(), "objectNotFoundDialog");
         } else {
-            isFavorite = false;
+            address = event.getAddress();
+            setHomeFragment();
         }
-        menu.findItem(R.id.menu_main__add_favorite).setVisible(!isFavorite);
-        menu.findItem(R.id.menu_main__remove_favorite).setVisible(isFavorite);
     }
 
-    private void setFavoritesInvisible(){
-        menu.findItem(R.id.menu_main__add_favorite).setVisible(false);
-        menu.findItem(R.id.menu_main__remove_favorite).setVisible(false);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void handleEvent(UnknownExceptionEvent event) {
+        UnknownErrorDialogFragment unknownError = UnknownErrorDialogFragment
+                .newInstance(event.getException().getMessage());
+        unknownError.show(getSupportFragmentManager(), "unknownErrorDialog");
     }
 }

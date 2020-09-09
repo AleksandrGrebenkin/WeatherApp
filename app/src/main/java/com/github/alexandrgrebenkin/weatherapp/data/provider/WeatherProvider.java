@@ -1,11 +1,12 @@
 package com.github.alexandrgrebenkin.weatherapp.data.provider;
 
-import com.github.alexandrgrebenkin.weatherapp.data.entity.Place;
+import android.location.Address;
+
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
 
 public interface WeatherProvider {
-    CurrentWeather getCurrentWeather(Place place);
+    CurrentWeather getCurrentWeather(Address address);
 
-    ForecastWeather getForecastWeather(Place place);
+    ForecastWeather getForecastWeather(Address address);
 }

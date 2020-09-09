@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.data.implementation.webservice.weather;
+package com.github.alexandrgrebenkin.weatherapp.data.webservice.weatherunlocked;
 
 import com.google.gson.annotations.SerializedName;
 
