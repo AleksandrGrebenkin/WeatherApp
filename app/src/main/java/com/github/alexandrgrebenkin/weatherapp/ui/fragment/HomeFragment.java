@@ -19,9 +19,11 @@ import com.github.alexandrgrebenkin.weatherapp.ui.event.CurrentWeatherLoaderEven
 import com.github.alexandrgrebenkin.weatherapp.ui.event.ForecastWeatherLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.R;
 import com.github.alexandrgrebenkin.weatherapp.ui.adapter.DayForecastAdapter;
+import com.github.alexandrgrebenkin.weatherapp.ui.event.WeatherLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.ui.loader.WeatherLoader;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.CurrentWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.ForecastWeatherViewModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.WeatherViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -65,7 +67,7 @@ public class HomeFragment extends Fragment {
         super.onStart();
         initialize();
         EventBus.getDefault().register(this);
-        updateWeather();
+        loadWeather();
     }
 
     @Override
@@ -85,9 +87,13 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void updateWeather() {
-        weatherLoader.getCurrentWeather(address);
-        weatherLoader.getForecastWeather(address);
+    private void loadWeather() {
+        weatherLoader.loadWeather(address);
+    }
+
+    private void updateWeather(WeatherViewModel weatherViewModel) {
+        updateCurrentWeather(weatherViewModel.getCurrentWeatherViewModel());
+        updateForecastWeather(weatherViewModel.getForecastWeatherViewModel());
     }
 
     private void updateCurrentWeather(CurrentWeatherViewModel currentWeatherViewModel) {
@@ -110,13 +116,18 @@ public class HomeFragment extends Fragment {
         dayOfWeekRecyclerView.setLayoutManager(layoutManager);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void handleEvent(CurrentWeatherLoaderEvent event) {
-        updateCurrentWeather(event.getCurrentWeatherViewModel());
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void handleEvent(CurrentWeatherLoaderEvent event) {
+//        updateCurrentWeather(event.getCurrentWeatherViewModel());
+//    }
+//
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void handleEvent(ForecastWeatherLoaderEvent event) {
+//        updateForecastWeather(event.getForecastWeatherViewModel());
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void handleEvent(ForecastWeatherLoaderEvent event) {
-        updateForecastWeather(event.getForecastWeatherViewModel());
+    public void handleEvent(WeatherLoaderEvent event) {
+        updateWeather(event.getWeatherViewModel());
     }
 }

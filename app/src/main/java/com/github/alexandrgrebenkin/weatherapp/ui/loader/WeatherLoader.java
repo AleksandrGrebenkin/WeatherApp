@@ -3,26 +3,24 @@ package com.github.alexandrgrebenkin.weatherapp.ui.loader;
 import android.content.res.Resources;
 import android.location.Address;
 
-import com.github.alexandrgrebenkin.weatherapp.ui.event.CurrentWeatherLoaderEvent;
-import com.github.alexandrgrebenkin.weatherapp.ui.event.ForecastWeatherLoaderEvent;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
 import com.github.alexandrgrebenkin.weatherapp.R;
 import com.github.alexandrgrebenkin.weatherapp.data.manager.WeatherDataManager;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
 import com.github.alexandrgrebenkin.weatherapp.ui.event.UnknownExceptionEvent;
+import com.github.alexandrgrebenkin.weatherapp.ui.event.WeatherLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.CurrentWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.DayWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.ForecastWeatherViewModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.WeatherViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,51 +33,47 @@ public class WeatherLoader {
         this.resources = resources;
     }
 
-    public void getCurrentWeather(Address address) {
+    public void loadWeather(Address address) {
         new Thread(() -> {
-            try {
-                CurrentWeatherViewModel currentWeatherViewModel = new CurrentWeatherViewModel();
-                CurrentWeather currentWeather = weatherDataManager
-                        .getCurrentWeather(address);
-
-                String cityName = currentWeather.getCityName();
-                currentWeatherViewModel.setCityName(cityName);
-
-                String temperature = formatTemperature(currentWeather.getTempCelsius());
-                currentWeatherViewModel.setTemperature(temperature);
-
-                String windSpeed = getRoundValueFromFloat(currentWeather.getWindSpeedMS())
-                        + " " + getResourceString(R.string.meter_per_second);
-                currentWeatherViewModel.setWindSpeed(windSpeed);
-
-                String pressure = getRoundValueFromFloat(currentWeather.getPressureMm())
-                        + " " + getResourceString(R.string.mm_of_mercury);
-                currentWeatherViewModel.setPressure(pressure);
-
-                CurrentWeatherLoaderEvent event = new CurrentWeatherLoaderEvent(currentWeatherViewModel);
+            try{
+                WeatherInfo weatherInfo = weatherDataManager.getWeatherInfo(address);
+                WeatherViewModel weatherViewModel = new WeatherViewModel(
+                        getCurrentWeatherViewModel(weatherInfo.getCurrentWeather()),
+                        getForecastWeatherViewModel(weatherInfo.getForecastWeather())
+                );
+                WeatherLoaderEvent event = new WeatherLoaderEvent(weatherViewModel);
                 EventBus.getDefault().post(event);
             } catch (Exception e) {
                 UnknownExceptionEvent event = new UnknownExceptionEvent(e);
                 EventBus.getDefault().post(event);
             }
         }).start();
+
     }
 
-    public void getForecastWeather(Address address) {
-        new Thread(() -> {
-            try {
-                ForecastWeatherViewModel forecastWeatherViewModel = new ForecastWeatherViewModel();
-                ForecastWeather forecastWeather = weatherDataManager
-                        .getForecastWeather(address);
-                forecastWeatherViewModel.setDayWeatherViewModelList(
-                        getWeatherViewModelList(forecastWeather.getDayWeatherList()));
-                ForecastWeatherLoaderEvent event = new ForecastWeatherLoaderEvent(forecastWeatherViewModel);
-                EventBus.getDefault().post(event);
-            } catch (Exception e) {
-                UnknownExceptionEvent event = new UnknownExceptionEvent(e);
-                EventBus.getDefault().post(event);
-            }
-        }).start();
+    private CurrentWeatherViewModel getCurrentWeatherViewModel(CurrentWeather currentWeather) {
+        CurrentWeatherViewModel currentWeatherViewModel = new CurrentWeatherViewModel();
+        String cityName = currentWeather.getCityName();
+        currentWeatherViewModel.setCityName(cityName);
+
+        String temperature = formatTemperature(currentWeather.getTempCelsius());
+        currentWeatherViewModel.setTemperature(temperature);
+
+        String windSpeed = getRoundValueFromFloat(currentWeather.getWindSpeedMS())
+                + " " + getResourceString(R.string.meter_per_second);
+        currentWeatherViewModel.setWindSpeed(windSpeed);
+
+        String pressure = getRoundValueFromFloat(currentWeather.getPressureMm())
+                + " " + getResourceString(R.string.mm_of_mercury);
+        currentWeatherViewModel.setPressure(pressure);
+        return currentWeatherViewModel;
+    }
+
+    private ForecastWeatherViewModel getForecastWeatherViewModel(ForecastWeather forecastWeather) {
+        ForecastWeatherViewModel forecastWeatherViewModel = new ForecastWeatherViewModel();
+        forecastWeatherViewModel.setDayWeatherViewModelList(
+                getWeatherViewModelList(forecastWeather.getDayWeatherList()));
+        return forecastWeatherViewModel;
     }
 
     private String getResourceString(int id) {
@@ -92,11 +86,11 @@ public class WeatherLoader {
             DayWeather dayWeather = dayWeatherList.get(i);
             DayWeatherViewModel dayWeatherViewModel = new DayWeatherViewModel();
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM", Locale.getDefault());
             dayWeatherViewModel.setDate(dateFormat.format(dayWeather.getDate()));
 
 
-            SimpleDateFormat dayOfWeekFormat = new SimpleDateFormat("EEEE");
+            SimpleDateFormat dayOfWeekFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
             String dayOfWeek = dayOfWeekFormat.format(dayWeather.getDate());
             dayWeatherViewModel.setDayOfWeek(dayOfWeek);
 

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.github.alexandrgrebenkin.weatherapp.BuildConfig;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
 import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherProvider;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
@@ -22,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InternetWeatherProvider implements WeatherProvider {
+public class WeatherUnlockedProvider implements WeatherProvider {
     private static final String TAG = "WEATHER_APP";
     private static final String WEATHER_URL =
             "http://api.weatherunlocked.com/api/{TYPE}/{LAT},{LON}?app_id={APP_ID}&app_key={APP_KEY}"
@@ -30,7 +31,11 @@ public class InternetWeatherProvider implements WeatherProvider {
                     .replace("{APP_KEY}", BuildConfig.WEATHER_APP_KEY);
 
     @Override
-    public CurrentWeather getCurrentWeather(Address address) {
+    public WeatherInfo getWeatherInfo(Address address) {
+        return new WeatherInfo(getCurrentWeather(address), getForecastWeather(address));
+    }
+
+    private CurrentWeather getCurrentWeather(Address address) {
         CurrentWeatherRequest request = getCurrentWeatherRequest(address);
         CurrentWeather currentWeather = new CurrentWeather();
         currentWeather.setCityName(address.getLocality());
@@ -40,8 +45,7 @@ public class InternetWeatherProvider implements WeatherProvider {
         return currentWeather;
     }
 
-    @Override
-    public ForecastWeather getForecastWeather(Address address) {
+    private ForecastWeather getForecastWeather(Address address) {
         ForecastWeatherRequest forecastRequest = getForecastWeatherRequest(address);
         ForecastWeather forecastWeather = new ForecastWeather();
         forecastWeather.setDayWeatherList(getDayWeatherList(forecastRequest.getDays()));
