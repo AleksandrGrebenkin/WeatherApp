@@ -8,63 +8,58 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import android.location.Address;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
+import com.github.alexandrgrebenkin.weatherapp.ui.WeatherModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.WeatherPresenter;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.ObjectNotFoundDialogFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.UnknownErrorDialogFragment;
-import com.github.alexandrgrebenkin.weatherapp.ui.loader.AddressLoader;
-import com.github.alexandrgrebenkin.weatherapp.ui.event.AddressLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.R;
-import com.github.alexandrgrebenkin.weatherapp.ui.event.UnknownExceptionEvent;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.AboutDevFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.FeedbackFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.HomeFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.SettingsFragment;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.WeatherViewModel;
 import com.google.android.material.navigation.NavigationView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 public class NavigationActivity extends BaseActivity
         implements SettingsFragment.Listener,
         NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String CITY_NAME_QUERY = "com.github.alexandrgrebenkin.weatherapp.CITY_NAME_QUERY";
+
     private DrawerLayout drawer;
 
     private SearchView searchView;
 
-    private Address address;
+    private WeatherPresenter presenter;
+
+    private String cityNameQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
-        EventBus.getDefault().register(this);
-
         Toolbar toolbar = initToolbar();
         initDrawer(toolbar);
         initNavigationListener();
 
         if (savedInstanceState == null) {
-            getDefaultAddress();
+            cityNameQuery = "Москва";
         } else {
-            address = savedInstanceState.getParcelable(HomeFragment.ADDRESS);
-            setHomeFragment();
+            cityNameQuery = savedInstanceState.getString(CITY_NAME_QUERY);
         }
-
+        setWeatherPresenter();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        presenter.detachView();
     }
 
     private void initDrawer(Toolbar toolbar) {
@@ -86,16 +81,23 @@ public class NavigationActivity extends BaseActivity
         return toolbar;
     }
 
+    private void setWeatherPresenter() {
+        WeatherModel weatherModel = new WeatherModel(this);
+        presenter = new WeatherPresenter(weatherModel);
+        presenter.attachView(this);
+        presenter.viewIsReady();
+    }
+
     private void initNavigationListener() {
         NavigationView navigationView = findViewById(R.id.activity_navigation__nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void setHomeFragment() {
-        HomeFragment homeFragment = HomeFragment.newInstance(address);
+    public void updateWeather(WeatherViewModel weatherViewModel) {
+        getSupportActionBar().setTitle(weatherViewModel.getCurrentWeatherViewModel().getCityName());
+        HomeFragment homeFragment = HomeFragment.getInstance(weatherViewModel);
         setFragment(homeFragment);
 
-        getSupportActionBar().setTitle(address.getLocality());
     }
 
     private void setSettingsFragment() {
@@ -128,7 +130,8 @@ public class NavigationActivity extends BaseActivity
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                loadAddress(query);
+                cityNameQuery = query;
+                presenter.loadWeather();
                 searchView.onActionViewCollapsed();
                 return true;
             }
@@ -158,7 +161,7 @@ public class NavigationActivity extends BaseActivity
                 setAboutDevFragment();
                 break;
             default:
-                setHomeFragment();
+                presenter.loadWeather();
         }
 
         if (id != R.id.menu_nav__i_home) {
@@ -175,7 +178,7 @@ public class NavigationActivity extends BaseActivity
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(HomeFragment.ADDRESS, address);
+        outState.putString(CITY_NAME_QUERY, cityNameQuery);
     }
 
     @Override
@@ -197,30 +200,18 @@ public class NavigationActivity extends BaseActivity
         recreate();
     }
 
-    private void getDefaultAddress() {
-        loadAddress("Москва");
+    public void showObjectNotFoundDialog(){
+        ObjectNotFoundDialogFragment objectNotFound = new ObjectNotFoundDialogFragment();
+        objectNotFound.show(getSupportFragmentManager(), "objectNotFoundDialog");
     }
 
-    private void loadAddress(String query) {
-        AddressLoader addressLoader = new AddressLoader();
-        addressLoader.loadAddress(NavigationActivity.this, query);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void handleEvent(AddressLoaderEvent event) {
-        if (event.getAddress() == null || event.getAddress().getLocality() == null) {
-            ObjectNotFoundDialogFragment objectNotFound = new ObjectNotFoundDialogFragment();
-            objectNotFound.show(getSupportFragmentManager(), "objectNotFoundDialog");
-        } else {
-            address = event.getAddress();
-            setHomeFragment();
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void handleEvent(UnknownExceptionEvent event) {
+    public void showUnknownErrorDialog(String msg) {
         UnknownErrorDialogFragment unknownError = UnknownErrorDialogFragment
-                .newInstance(event.getException().getMessage());
+                .newInstance(msg);
         unknownError.show(getSupportFragmentManager(), "unknownErrorDialog");
+    }
+
+    public String getCityNameQuery() {
+        return cityNameQuery;
     }
 }

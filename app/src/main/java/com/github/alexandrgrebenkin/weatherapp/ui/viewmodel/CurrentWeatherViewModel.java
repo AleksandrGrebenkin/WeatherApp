@@ -1,6 +1,9 @@
 package com.github.alexandrgrebenkin.weatherapp.ui.viewmodel;
 
-public class CurrentWeatherViewModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class CurrentWeatherViewModel implements Parcelable {
     private String cityName;
     private String temperature;
     private String windSpeed;
@@ -37,4 +40,39 @@ public class CurrentWeatherViewModel {
     public void setPressure(String pressure) {
         this.pressure = pressure;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.cityName);
+        dest.writeString(this.temperature);
+        dest.writeString(this.windSpeed);
+        dest.writeString(this.pressure);
+    }
+
+    public CurrentWeatherViewModel() {
+    }
+
+    protected CurrentWeatherViewModel(Parcel in) {
+        this.cityName = in.readString();
+        this.temperature = in.readString();
+        this.windSpeed = in.readString();
+        this.pressure = in.readString();
+    }
+
+    public static final Parcelable.Creator<CurrentWeatherViewModel> CREATOR = new Parcelable.Creator<CurrentWeatherViewModel>() {
+        @Override
+        public CurrentWeatherViewModel createFromParcel(Parcel source) {
+            return new CurrentWeatherViewModel(source);
+        }
+
+        @Override
+        public CurrentWeatherViewModel[] newArray(int size) {
+            return new CurrentWeatherViewModel[size];
+        }
+    };
 }

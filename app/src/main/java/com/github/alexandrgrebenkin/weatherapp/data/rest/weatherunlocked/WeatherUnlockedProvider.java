@@ -1,4 +1,4 @@
-package com.github.alexandrgrebenkin.weatherapp.data.webservice.weatherunlocked;
+package com.github.alexandrgrebenkin.weatherapp.data.rest.weatherunlocked;
 
 import android.location.Address;
 import android.util.Log;
@@ -6,6 +6,7 @@ import android.util.Log;
 import com.github.alexandrgrebenkin.weatherapp.BuildConfig;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherInfoListener;
 import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherProvider;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
@@ -23,16 +24,34 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class WeatherUnlockedProvider implements WeatherProvider {
     private static final String TAG = "WEATHER_APP";
     private static final String WEATHER_URL =
             "http://api.weatherunlocked.com/api/{TYPE}/{LAT},{LON}?app_id={APP_ID}&app_key={APP_KEY}"
                     .replace("{APP_ID}", BuildConfig.WEATHER_APP_ID)
                     .replace("{APP_KEY}", BuildConfig.WEATHER_APP_KEY);
+    private WeatherInfoListener weatherInfoListener;
+    private Address address;
 
     @Override
-    public WeatherInfo getWeatherInfo(Address address) {
-        return new WeatherInfo(getCurrentWeather(address), getForecastWeather(address));
+    public void loadWeatherInfo(Address address, WeatherInfoListener weatherInfoListener) {
+        getWeatherInfo(address).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(weatherInfo -> {
+                    weatherInfoListener.onLoad(weatherInfo);
+                });
+    }
+
+    private Observable<WeatherInfo> getWeatherInfo(Address address) {
+        return Observable.create(emitter -> {
+            WeatherInfo weatherInfo = new WeatherInfo(getCurrentWeather(address),
+                    getForecastWeather(address));
+            emitter.onNext(weatherInfo);
+        });
     }
 
     private CurrentWeather getCurrentWeather(Address address) {

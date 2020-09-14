@@ -1,6 +1,6 @@
-package com.github.alexandrgrebenkin.weatherapp.ui.loader;
+package com.github.alexandrgrebenkin.weatherapp.ui;
 
-import android.content.res.Resources;
+import android.content.Context;
 import android.location.Address;
 
 import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
@@ -9,8 +9,6 @@ import com.github.alexandrgrebenkin.weatherapp.data.manager.WeatherDataManager;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
-import com.github.alexandrgrebenkin.weatherapp.ui.event.UnknownExceptionEvent;
-import com.github.alexandrgrebenkin.weatherapp.ui.event.WeatherLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.CurrentWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.DayWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.ForecastWeatherViewModel;
@@ -24,31 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class WeatherLoader {
-    private WeatherDataManager weatherDataManager;
-    private Resources resources;
+public class WeatherConverter {
 
-    public WeatherLoader(Resources resources) {
-        this.weatherDataManager = new WeatherDataManager();
-        this.resources = resources;
+    private Context context;
+
+    public WeatherConverter(Context context) {
+        this.context = context;
     }
 
-    public void loadWeather(Address address) {
-        new Thread(() -> {
-            try{
-                WeatherInfo weatherInfo = weatherDataManager.getWeatherInfo(address);
-                WeatherViewModel weatherViewModel = new WeatherViewModel(
-                        getCurrentWeatherViewModel(weatherInfo.getCurrentWeather()),
-                        getForecastWeatherViewModel(weatherInfo.getForecastWeather())
-                );
-                WeatherLoaderEvent event = new WeatherLoaderEvent(weatherViewModel);
-                EventBus.getDefault().post(event);
-            } catch (Exception e) {
-                UnknownExceptionEvent event = new UnknownExceptionEvent(e);
-                EventBus.getDefault().post(event);
-            }
-        }).start();
-
+    public WeatherViewModel getWeatherViewModel(WeatherInfo weatherInfo) {
+        return new WeatherViewModel(
+                getCurrentWeatherViewModel(weatherInfo.getCurrentWeather()),
+                getForecastWeatherViewModel(weatherInfo.getForecastWeather())
+        );
     }
 
     private CurrentWeatherViewModel getCurrentWeatherViewModel(CurrentWeather currentWeather) {
@@ -77,7 +63,7 @@ public class WeatherLoader {
     }
 
     private String getResourceString(int id) {
-        return resources.getString(id);
+        return context.getResources().getString(id);
     }
 
     private List<DayWeatherViewModel> getWeatherViewModelList(List<DayWeather> dayWeatherList) {

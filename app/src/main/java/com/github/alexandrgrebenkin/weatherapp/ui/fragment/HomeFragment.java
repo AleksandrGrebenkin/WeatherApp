@@ -1,6 +1,5 @@
 package com.github.alexandrgrebenkin.weatherapp.ui.fragment;
 
-import android.location.Address;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -15,80 +14,59 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.github.alexandrgrebenkin.weatherapp.ui.event.CurrentWeatherLoaderEvent;
-import com.github.alexandrgrebenkin.weatherapp.ui.event.ForecastWeatherLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.R;
 import com.github.alexandrgrebenkin.weatherapp.ui.adapter.DayForecastAdapter;
-import com.github.alexandrgrebenkin.weatherapp.ui.event.WeatherLoaderEvent;
-import com.github.alexandrgrebenkin.weatherapp.ui.loader.WeatherLoader;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.CurrentWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.ForecastWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.WeatherViewModel;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 public class HomeFragment extends Fragment {
 
-    public static final String ADDRESS = "com.github.alexandrgrebenkin.weatherapp.ADDRESS";
+    public static final String WEATHER_VIEW_MODEL = "com.github.alexandrgrebenkin.weatherapp.WEATHER_VIEW_MODEL";
 
     private TextView temperature;
     private TextView wind;
     private TextView pressure;
 
     private RecyclerView dayOfWeekRecyclerView;
-
-    private WeatherLoader weatherLoader;
-    private Address address;
-
-    public static HomeFragment newInstance(Address address) {
-        HomeFragment homeFragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(ADDRESS, address);
-        homeFragment.setArguments(args);
-        return homeFragment;
-    }
+    private WeatherViewModel weatherViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        address = getArguments().getParcelable(ADDRESS);
+        weatherViewModel = getArguments().getParcelable(WEATHER_VIEW_MODEL);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        initialize();
-        EventBus.getDefault().register(this);
-        loadWeather();
+        init();
+        updateWeather(weatherViewModel);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
+    public static HomeFragment getInstance(WeatherViewModel weatherViewModel) {
+        HomeFragment homeFragment = new HomeFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(WEATHER_VIEW_MODEL, weatherViewModel);
+        homeFragment.setArguments(args);
+        return homeFragment;
     }
 
-    private void initialize() {
+    private void init() {
         View view = getView();
         if (view != null) {
             temperature = view.findViewById(R.id.fragment_home__tv_temperature);
             wind = view.findViewById(R.id.fragment_home__tv_wind);
             pressure = view.findViewById(R.id.fragment_home__tv_pressure);
             dayOfWeekRecyclerView = view.findViewById(R.id.fragment_home__rv_day_info);
-            weatherLoader = new WeatherLoader(getResources());
         }
-    }
-
-    private void loadWeather() {
-        weatherLoader.loadWeather(address);
     }
 
     private void updateWeather(WeatherViewModel weatherViewModel) {
@@ -97,9 +75,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateCurrentWeather(CurrentWeatherViewModel currentWeatherViewModel) {
-        this.temperature.setText(currentWeatherViewModel.getTemperature());
-        this.wind.setText(currentWeatherViewModel.getWindSpeed());
-        this.pressure.setText(currentWeatherViewModel.getPressure());
+        temperature.setText(currentWeatherViewModel.getTemperature());
+        wind.setText(currentWeatherViewModel.getWindSpeed());
+        pressure.setText(currentWeatherViewModel.getPressure());
     }
 
     private void updateForecastWeather(ForecastWeatherViewModel forecastWeatherViewModel) {
@@ -114,20 +92,5 @@ public class HomeFragment extends Fragment {
         itemDecoration.setDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.separator));
         dayOfWeekRecyclerView.addItemDecoration(itemDecoration);
         dayOfWeekRecyclerView.setLayoutManager(layoutManager);
-    }
-
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void handleEvent(CurrentWeatherLoaderEvent event) {
-//        updateCurrentWeather(event.getCurrentWeatherViewModel());
-//    }
-//
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void handleEvent(ForecastWeatherLoaderEvent event) {
-//        updateForecastWeather(event.getForecastWeatherViewModel());
-//    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void handleEvent(WeatherLoaderEvent event) {
-        updateWeather(event.getWeatherViewModel());
     }
 }
