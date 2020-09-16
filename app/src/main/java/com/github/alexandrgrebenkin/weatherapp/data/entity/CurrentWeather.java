@@ -5,6 +5,7 @@ public class CurrentWeather {
     private float tempCelsius;
     private float windSpeedMS;
     private float pressureMm;
+    private WeatherCondition weatherCondition;
 
     public String getCityName() {
         return cityName;
@@ -22,6 +23,10 @@ public class CurrentWeather {
         return pressureMm;
     }
 
+    public WeatherCondition getWeatherCondition() {
+        return weatherCondition;
+    }
+
     public void setCityName(String cityName) {
         this.cityName = cityName;
     }
@@ -36,5 +41,9 @@ public class CurrentWeather {
 
     public void setPressureMm(float pressureMm) {
         this.pressureMm = pressureMm;
+    }
+
+    public void setWeatherCondition(WeatherCondition weatherCondition) {
+        this.weatherCondition = weatherCondition;
     }
 }

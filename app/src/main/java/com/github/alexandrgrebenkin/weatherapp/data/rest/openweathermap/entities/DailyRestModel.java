@@ -31,7 +31,7 @@ public class DailyRestModel {
     @SerializedName("clouds")
     public int clouds;
     @SerializedName("pop")
-    public int pop;
+    public float pop;
     @SerializedName("rain")
     public float rain;
     @SerializedName("uvi")

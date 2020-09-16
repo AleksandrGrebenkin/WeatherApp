@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.alexandrgrebenkin.weatherapp.R;
 import com.github.alexandrgrebenkin.weatherapp.ui.adapter.DayForecastAdapter;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.CurrentWeatherViewModel;
@@ -27,6 +28,7 @@ public class HomeFragment extends Fragment {
     private TextView temperature;
     private TextView wind;
     private TextView pressure;
+    private SimpleDraweeView weatherImage;
 
     private RecyclerView dayOfWeekRecyclerView;
     private WeatherViewModel weatherViewModel;
@@ -65,6 +67,7 @@ public class HomeFragment extends Fragment {
             temperature = view.findViewById(R.id.fragment_home__tv_temperature);
             wind = view.findViewById(R.id.fragment_home__tv_wind);
             pressure = view.findViewById(R.id.fragment_home__tv_pressure);
+            weatherImage = view.findViewById(R.id.fragment_home__iv_weather_image);
             dayOfWeekRecyclerView = view.findViewById(R.id.fragment_home__rv_day_info);
         }
     }
@@ -78,6 +81,7 @@ public class HomeFragment extends Fragment {
         temperature.setText(currentWeatherViewModel.getTemperature());
         wind.setText(currentWeatherViewModel.getWindSpeed());
         pressure.setText(currentWeatherViewModel.getPressure());
+        weatherImage.setImageURI(currentWeatherViewModel.getImageUri());
     }
 
     private void updateForecastWeather(ForecastWeatherViewModel forecastWeatherViewModel) {

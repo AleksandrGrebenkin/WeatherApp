@@ -5,11 +5,12 @@ import android.util.Log;
 
 import com.github.alexandrgrebenkin.weatherapp.BuildConfig;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherCondition;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherInfoListener;
 import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherProvider;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.rest.openweathermap.entities.WeatherRestModel;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -34,8 +35,6 @@ public class WeatherUnlockedProvider implements WeatherProvider {
             "http://api.weatherunlocked.com/api/{TYPE}/{LAT},{LON}?app_id={APP_ID}&app_key={APP_KEY}"
                     .replace("{APP_ID}", BuildConfig.WEATHER_APP_ID)
                     .replace("{APP_KEY}", BuildConfig.WEATHER_APP_KEY);
-    private WeatherInfoListener weatherInfoListener;
-    private Address address;
 
     @Override
     public void loadWeatherInfo(Address address, WeatherInfoListener weatherInfoListener) {
@@ -61,6 +60,7 @@ public class WeatherUnlockedProvider implements WeatherProvider {
         currentWeather.setTempCelsius(request.getTempC());
         currentWeather.setWindSpeedMS(request.getWindSpeedMS());
         currentWeather.setPressureMm(request.getPressureInches() * 25.4f);
+        currentWeather.setWeatherCondition(getWeatherCondition(request.getWeatherCode()));
         return currentWeather;
     }
 
@@ -139,7 +139,7 @@ public class WeatherUnlockedProvider implements WeatherProvider {
         return currentWeatherRequest;
     }
 
-    private List<DayWeather> getDayWeatherList (List<DayWeatherRequest> dayWeatherRequestList) {
+    private List<DayWeather> getDayWeatherList(List<DayWeatherRequest> dayWeatherRequestList) {
         List<DayWeather> dayWeatherList = new ArrayList<>();
         for (int i = 0; i < dayWeatherRequestList.size(); i++) {
             DayWeatherRequest dayRequest = dayWeatherRequestList.get(i);
@@ -157,17 +157,42 @@ public class WeatherUnlockedProvider implements WeatherProvider {
         return dayWeatherList;
     }
 
-    private String getLines(BufferedReader in) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            String line = null;
-            while ((line = in.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    private WeatherCondition getWeatherCondition(float weatherCode) {
+        int weatherId = (int) weatherCode;
+        if (weatherId == 0) {
+            return WeatherCondition.CLEAR;
+        } else if (weatherId >= 1 && weatherId <= 3) {
+            return WeatherCondition.CLOUDS;
+        } else if (weatherId >= 10 && weatherId <= 49) {
+            return WeatherCondition.FOG;
+        } else if (weatherId >= 50 && weatherId <= 57) {
+            return WeatherCondition.DRIZZLE;
+        } else if (weatherId >= 60 && weatherId <= 67) {
+            return WeatherCondition.RAIN;
+        } else if (weatherId >= 68 && weatherId <= 79) {
+            return WeatherCondition.SNOW;
+        } else if (weatherId >= 80 && weatherId <= 82) {
+            return WeatherCondition.RAIN;
+        } else if (weatherId >= 83 && weatherId <= 88) {
+            return WeatherCondition.SNOW;
+        } else if (weatherId >= 91 && weatherId <= 94) {
+            return WeatherCondition.THUNDERSTORM;
+        } else {
+            return WeatherCondition.UNKNOWN;
         }
-
-        return sb.toString();
     }
-}
+
+        private String getLines (BufferedReader in){
+            StringBuilder sb = new StringBuilder();
+            try {
+                String line = null;
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return sb.toString();
+        }
+    }

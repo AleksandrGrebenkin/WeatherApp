@@ -8,12 +8,13 @@ import androidx.annotation.NonNull;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherCondition;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
-import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherInfoListener;
 import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherProvider;
 import com.github.alexandrgrebenkin.weatherapp.data.rest.openweathermap.entities.CurrentRestModel;
 import com.github.alexandrgrebenkin.weatherapp.data.rest.openweathermap.entities.DailyRestModel;
 import com.github.alexandrgrebenkin.weatherapp.data.rest.openweathermap.entities.OpenWeatherRequestRestModel;
+import com.github.alexandrgrebenkin.weatherapp.data.rest.openweathermap.entities.WeatherRestModel;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +38,7 @@ public class OpenWeatherProvider implements WeatherProvider {
                 "metric",
                 "ru"
         ).enqueue(new Callback<OpenWeatherRequestRestModel>() {
+
             @Override
             public void onResponse(@NonNull Call<OpenWeatherRequestRestModel> call,
                                    @NonNull Response<OpenWeatherRequestRestModel> response) {
@@ -48,7 +50,7 @@ public class OpenWeatherProvider implements WeatherProvider {
 
             @Override
             public void onFailure(Call<OpenWeatherRequestRestModel> call, Throwable t) {
-
+                Log.e("RESPONSE_ERROR", t.getMessage());
             }
         });
     }
@@ -85,7 +87,35 @@ public class OpenWeatherProvider implements WeatherProvider {
         currentWeather.setTempCelsius(currentRestModel.temp);
         currentWeather.setPressureMm(currentRestModel.pressure * 0.75f);
         currentWeather.setWindSpeedMS(currentRestModel.windSpeed);
+        currentWeather.setWeatherCondition(getWeatherCondition(currentRestModel.weather.get(0)));
         return currentWeather;
+    }
+
+    private WeatherCondition getWeatherCondition(WeatherRestModel weatherRestModel) {
+        int weatherId = weatherRestModel.id;
+        if (weatherId >= 200 && weatherId < 300) {
+            return WeatherCondition.THUNDERSTORM;
+        } else if (weatherId >= 300 && weatherId < 400) {
+            return WeatherCondition.DRIZZLE;
+        } else if (weatherId >= 500 && weatherId < 600) {
+            return WeatherCondition.RAIN;
+        } else if (weatherId >= 600 && weatherId < 700) {
+            return WeatherCondition.SNOW;
+        } else if (weatherId == 741) {
+            return WeatherCondition.FOG;
+        } else if (weatherId == 781) {
+            return WeatherCondition.TORNADO;
+        } else if (weatherId >= 700 && weatherId < 800) {
+            return WeatherCondition.SMOKE;
+        } else if (weatherId == 800) {
+            return WeatherCondition.CLEAR;
+        } else if (weatherId > 800 && weatherId < 900) {
+            return WeatherCondition.CLOUDS;
+        } else {
+            return WeatherCondition.UNKNOWN;
+        }
+
+
     }
 
 

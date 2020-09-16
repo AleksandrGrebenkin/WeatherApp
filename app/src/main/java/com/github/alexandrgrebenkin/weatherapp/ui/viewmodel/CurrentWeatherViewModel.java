@@ -1,5 +1,6 @@
 package com.github.alexandrgrebenkin.weatherapp.ui.viewmodel;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,6 +9,7 @@ public class CurrentWeatherViewModel implements Parcelable {
     private String temperature;
     private String windSpeed;
     private String pressure;
+    private Uri imageUri;
 
     public String getCityName() {
         return cityName;
@@ -23,6 +25,10 @@ public class CurrentWeatherViewModel implements Parcelable {
 
     public String getPressure() {
         return pressure;
+    }
+
+    public Uri getImageUri() {
+        return imageUri;
     }
 
     public void setCityName(String cityName) {
@@ -41,6 +47,11 @@ public class CurrentWeatherViewModel implements Parcelable {
         this.pressure = pressure;
     }
 
+    public void setImageUri(Uri imageUri) {
+        this.imageUri = imageUri;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -52,6 +63,7 @@ public class CurrentWeatherViewModel implements Parcelable {
         dest.writeString(this.temperature);
         dest.writeString(this.windSpeed);
         dest.writeString(this.pressure);
+        dest.writeParcelable(this.imageUri, flags);
     }
 
     public CurrentWeatherViewModel() {
@@ -62,9 +74,10 @@ public class CurrentWeatherViewModel implements Parcelable {
         this.temperature = in.readString();
         this.windSpeed = in.readString();
         this.pressure = in.readString();
+        this.imageUri = in.readParcelable(Uri.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<CurrentWeatherViewModel> CREATOR = new Parcelable.Creator<CurrentWeatherViewModel>() {
+    public static final Creator<CurrentWeatherViewModel> CREATOR = new Creator<CurrentWeatherViewModel>() {
         @Override
         public CurrentWeatherViewModel createFromParcel(Parcel source) {
             return new CurrentWeatherViewModel(source);
