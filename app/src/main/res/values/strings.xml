@@ -41,5 +41,6 @@
     <string name="not_found_error_title">Object not found</string>
     <string name="not_found_error">Search object not found</string>
     <string name="unknown_error">Unknown error!</string>
+    <string name="history">History</string>
 
 </resources>

@@ -1,22 +1,20 @@
 package com.github.alexandrgrebenkin.weatherapp.ui;
 
 import android.content.Context;
-import android.location.Address;
 import android.net.Uri;
 
-import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherCondition;
-import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
 import com.github.alexandrgrebenkin.weatherapp.R;
-import com.github.alexandrgrebenkin.weatherapp.data.manager.WeatherDataManager;
+import com.github.alexandrgrebenkin.weatherapp.data.database.model.HistoryInfo;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherCondition;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.CurrentWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.DayWeatherViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.ForecastWeatherViewModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.HistoryInfoViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.WeatherViewModel;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -153,4 +151,17 @@ public class WeatherConverter {
         }
     }
 
+    public List<HistoryInfoViewModel> getHistoryInfoViewModelList(List<HistoryInfo> historyInfos) {
+        List<HistoryInfoViewModel> historyInfoViewModelList = new ArrayList<>(historyInfos.size());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy \t HH:mm", Locale.getDefault());
+        for (int i = 0; i < historyInfos.size(); i++) {
+            HistoryInfo historyInfo = historyInfos.get(i);
+            HistoryInfoViewModel historyInfoViewModel = new HistoryInfoViewModel();
+            historyInfoViewModel.setCityName(historyInfo.cityName);
+            historyInfoViewModel.setTemperature(formatTemperature(historyInfo.tempCelsius));
+            historyInfoViewModel.setDate(simpleDateFormat.format(historyInfo.dateUTC));
+            historyInfoViewModelList.add(historyInfoViewModel);
+        }
+        return historyInfoViewModelList;
+    }
 }

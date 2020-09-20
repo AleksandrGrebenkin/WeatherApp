@@ -8,6 +8,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.view.View;
 
 import com.github.alexandrgrebenkin.weatherapp.ui.WeatherModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.WeatherPresenter;
+import com.github.alexandrgrebenkin.weatherapp.ui.fragment.HistoryFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.ObjectNotFoundDialogFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.UnknownErrorDialogFragment;
 import com.github.alexandrgrebenkin.weatherapp.R;
@@ -22,14 +24,20 @@ import com.github.alexandrgrebenkin.weatherapp.ui.fragment.AboutDevFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.FeedbackFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.HomeFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.SettingsFragment;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.HistoryInfoViewModel;
 import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.WeatherViewModel;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NavigationActivity extends BaseActivity
         implements SettingsFragment.Listener,
         NavigationView.OnNavigationItemSelectedListener {
 
     public static final String CITY_NAME_QUERY = "com.github.alexandrgrebenkin.weatherapp.CITY_NAME_QUERY";
+
+    private final String CITY_NAME = "CITY_NAME";
 
     private DrawerLayout drawer;
 
@@ -49,7 +57,7 @@ public class NavigationActivity extends BaseActivity
         initNavigationListener();
 
         if (savedInstanceState == null) {
-            cityNameQuery = "Москва";
+            cityNameQuery = loadCityNameFromPref();
         } else {
             cityNameQuery = savedInstanceState.getString(CITY_NAME_QUERY);
         }
@@ -93,11 +101,30 @@ public class NavigationActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void updateWeather(WeatherViewModel weatherViewModel) {
+    public void showWeather(WeatherViewModel weatherViewModel) {
         getSupportActionBar().setTitle(weatherViewModel.getCurrentWeatherViewModel().getCityName());
-        HomeFragment homeFragment = HomeFragment.getInstance(weatherViewModel);
+        HomeFragment homeFragment = HomeFragment.newInstance(weatherViewModel);
         setFragment(homeFragment);
+        saveCityNameToPref(weatherViewModel.getCurrentWeatherViewModel().getCityName());
 
+    }
+
+    private void saveCityNameToPref(String cityName) {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        sharedPreferences.edit()
+                .putString(CITY_NAME, cityName)
+                .commit();
+    }
+
+    private String loadCityNameFromPref() {
+        return getPreferences(MODE_PRIVATE).getString(CITY_NAME, "Москва");
+    }
+
+    public void showHistory(List<HistoryInfoViewModel> historyInfoViewModelList) {
+        getSupportActionBar().setTitle(getResources().getString(R.string.history));
+        HistoryFragment historyFragment = HistoryFragment
+                .newInstance((ArrayList<HistoryInfoViewModel>) historyInfoViewModelList);
+        setFragment(historyFragment);
     }
 
     private void setSettingsFragment() {
@@ -151,6 +178,9 @@ public class NavigationActivity extends BaseActivity
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.menu_nav__i_history:
+                presenter.loadHistory();
+                break;
             case R.id.menu_nav__i_settings:
                 setSettingsFragment();
                 break;

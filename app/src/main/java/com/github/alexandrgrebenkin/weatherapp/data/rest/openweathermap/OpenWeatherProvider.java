@@ -83,7 +83,7 @@ public class OpenWeatherProvider implements WeatherProvider {
     private CurrentWeather getCurrentWeather(OpenWeatherRequestRestModel openWeatherRequestRestModel) {
         CurrentRestModel currentRestModel = openWeatherRequestRestModel.current;
         CurrentWeather currentWeather = new CurrentWeather();
-        currentWeather.setCityName(address.getLocality());
+        currentWeather.setCityName(getCityNameFromAddress(address));
         currentWeather.setTempCelsius(currentRestModel.temp);
         currentWeather.setPressureMm(currentRestModel.pressure * 0.75f);
         currentWeather.setWindSpeedMS(currentRestModel.windSpeed);
@@ -118,5 +118,12 @@ public class OpenWeatherProvider implements WeatherProvider {
 
     }
 
+    private String getCityNameFromAddress(Address address) {
+        StringBuilder sb = new StringBuilder(address.getLocality());
+        if (address.getAdminArea() != null) {
+            sb.append(", ").append(address.getAdminArea());
+        }
+        return sb.toString();
+    }
 
 }

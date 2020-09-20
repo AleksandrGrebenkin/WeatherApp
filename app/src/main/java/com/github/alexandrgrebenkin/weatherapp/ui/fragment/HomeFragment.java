@@ -50,10 +50,10 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
         init();
-        updateWeather(weatherViewModel);
+        updateWeather();
     }
 
-    public static HomeFragment getInstance(WeatherViewModel weatherViewModel) {
+    public static HomeFragment newInstance(WeatherViewModel weatherViewModel) {
         HomeFragment homeFragment = new HomeFragment();
         Bundle args = new Bundle();
         args.putParcelable(WEATHER_VIEW_MODEL, weatherViewModel);
@@ -72,7 +72,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void updateWeather(WeatherViewModel weatherViewModel) {
+    private void updateWeather() {
         updateCurrentWeather(weatherViewModel.getCurrentWeatherViewModel());
         updateForecastWeather(weatherViewModel.getForecastWeatherViewModel());
     }

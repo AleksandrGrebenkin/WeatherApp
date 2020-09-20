@@ -2,13 +2,21 @@ package com.github.alexandrgrebenkin.weatherapp.ui;
 
 import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
 
+import com.github.alexandrgrebenkin.weatherapp.data.database.model.HistoryInfo;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
 import com.github.alexandrgrebenkin.weatherapp.ui.activity.NavigationActivity;
 
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.HistoryInfoViewModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.WeatherViewModel;
+
+import java.util.List;
 import java.util.Locale;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class WeatherPresenter {
@@ -41,17 +49,15 @@ public class WeatherPresenter {
                     } else {
                         loadWeather(address);
                     }
-                }, throwable -> {
-                    view.showUnknownErrorDialog(throwable.getLocalizedMessage());
-                });
+                }, throwable -> view.showUnknownErrorDialog(throwable.getLocalizedMessage()));
     }
 
-    private Observable<Address> loadAddress() {
-        return Observable.create(emitter -> {
+    private Single<Address> loadAddress() {
+        return Single.create(emitter -> {
             try {
                 Geocoder geocoder = new Geocoder(view, Locale.getDefault());
                 Address address = geocoder.getFromLocationName(view.getCityNameQuery(), 1).get(0);
-                emitter.onNext(address);
+                emitter.onSuccess(address);
             } catch (Exception e) {
                 emitter.onError(e);
             }
@@ -61,9 +67,44 @@ public class WeatherPresenter {
     private void loadWeather(Address address) {
         model.loadWeather(address, weatherInfo -> {
             WeatherConverter weatherConverter = new WeatherConverter(view);
-            view.updateWeather(weatherConverter.getWeatherViewModel(weatherInfo));
+            WeatherViewModel weatherViewModel = weatherConverter.getWeatherViewModel(weatherInfo);
+            writeHistoryInfoIntoDB(weatherInfo.getCurrentWeather())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(() -> Log.d("HistoryInfo", "Added successful"),
+                            throwable -> view.showUnknownErrorDialog(throwable.getLocalizedMessage()));
+            view.showWeather(weatherViewModel);
         });
     }
 
+    public void loadHistory() {
+        loadHistoryInfoFromDB().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(historyInfos -> {
+                    WeatherConverter weatherConverter = new WeatherConverter(view);
+                    List<HistoryInfoViewModel> historyInfoViewModelList =
+                            weatherConverter.getHistoryInfoViewModelList(historyInfos);
+                    view.showHistory(historyInfoViewModelList);
+                }, throwable -> view.showUnknownErrorDialog(throwable.getLocalizedMessage()));
+    }
 
+    private Single<List<HistoryInfo>> loadHistoryInfoFromDB() {
+        return Single.create(emitter -> {
+            try {
+                emitter.onSuccess(model.loadHistoryInfoFromDB());
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        });
+    }
+
+    private Completable writeHistoryInfoIntoDB(CurrentWeather currentWeather) {
+        return Completable.create(emitter -> {
+            try {
+                model.writeHistoryInfoIntoDB(currentWeather);
+                emitter.onComplete();
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        });
+    }
 }

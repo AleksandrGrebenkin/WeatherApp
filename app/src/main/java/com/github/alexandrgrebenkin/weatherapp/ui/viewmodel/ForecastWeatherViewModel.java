@@ -31,7 +31,7 @@ public class ForecastWeatherViewModel implements Parcelable {
     }
 
     protected ForecastWeatherViewModel(Parcel in) {
-        this.dayWeatherViewModelList = new ArrayList<DayWeatherViewModel>();
+        this.dayWeatherViewModelList = new ArrayList<>();
         in.readList(this.dayWeatherViewModelList, DayWeatherViewModel.class.getClassLoader());
     }
 
