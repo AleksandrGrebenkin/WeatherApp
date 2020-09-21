@@ -43,4 +43,7 @@
     <string name="unknown_error">Unknown error!</string>
     <string name="history">History</string>
 
+    <string name="network_connection_notification">Network connection notification</string>
+    <string name="wifi_connection_disabled">Wi-Fi connection disabled</string>
+
 </resources>
