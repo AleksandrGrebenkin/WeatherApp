@@ -2,6 +2,7 @@ package com.github.alexandrgrebenkin.weatherapp.ui;
 
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.util.Log;
 
 import com.github.alexandrgrebenkin.weatherapp.data.database.model.HistoryInfo;
@@ -52,10 +53,36 @@ public class WeatherPresenter {
                 }, throwable -> view.showUnknownErrorDialog(throwable.getLocalizedMessage()));
     }
 
+    public void loadWeatherFromLocation() {
+        loadAddressFromLocation().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(address -> {
+                    if (address == null || address.getLocality() == null) {
+                        view.showObjectNotFoundDialog();
+                    } else {
+                        loadWeather(address);
+                    }
+                }, throwable -> view.showUnknownErrorDialog(throwable.getLocalizedMessage()));
+    }
+
+    Single<Address> loadAddressFromLocation() {
+        return Single.create(emitter -> {
+            try {
+                Geocoder geocoder = new Geocoder(view, getCurrentLocale());
+                Location location = view.getLocation();
+                Address address = geocoder.getFromLocation(
+                        location.getLatitude(), location.getLongitude(), 1).get(0);
+                emitter.onSuccess(address);
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        });
+    }
+
     private Single<Address> loadAddress() {
         return Single.create(emitter -> {
             try {
-                Geocoder geocoder = new Geocoder(view, Locale.getDefault());
+                Geocoder geocoder = new Geocoder(view, getCurrentLocale());
                 Address address = geocoder.getFromLocationName(view.getCityNameQuery(), 1).get(0);
                 emitter.onSuccess(address);
             } catch (Exception e) {
@@ -106,5 +133,13 @@ public class WeatherPresenter {
                 emitter.onError(e);
             }
         });
+    }
+
+    private Locale getCurrentLocale() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return view.getResources().getConfiguration().getLocales().get(0);
+        } else {
+            return view.getResources().getConfiguration().locale;
+        }
     }
 }

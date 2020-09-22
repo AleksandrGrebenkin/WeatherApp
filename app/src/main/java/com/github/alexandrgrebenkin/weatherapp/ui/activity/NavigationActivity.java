@@ -4,11 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,9 +40,12 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class NavigationActivity extends BaseActivity
-        implements SettingsFragment.Listener,
+        implements HomeFragment.OnMenuItemSelectedListener,
+        SettingsFragment.Listener,
         NavigationView.OnNavigationItemSelectedListener {
 
     public static final String CITY_NAME_QUERY = "com.github.alexandrgrebenkin.weatherapp.CITY_NAME_QUERY";
@@ -41,11 +54,12 @@ public class NavigationActivity extends BaseActivity
 
     private DrawerLayout drawer;
 
-    private SearchView searchView;
-
     private WeatherPresenter presenter;
 
     private String cityNameQuery;
+    private Location currentLocation;
+    private LocListener locationListener;
+    private LocationManager locManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +70,32 @@ public class NavigationActivity extends BaseActivity
         initDrawer(toolbar);
         initNavigationListener();
 
+        locManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         if (savedInstanceState == null) {
             cityNameQuery = loadCityNameFromPref();
         } else {
             cityNameQuery = savedInstanceState.getString(CITY_NAME_QUERY);
         }
         setWeatherPresenter();
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (locationListener == null) {
+            locationListener = new LocListener();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (locationListener != null) {
+            locManager.removeUpdates(locationListener);
+        }
+
+        super.onPause();
     }
 
     @Override
@@ -93,7 +127,11 @@ public class NavigationActivity extends BaseActivity
         WeatherModel weatherModel = new WeatherModel(this);
         presenter = new WeatherPresenter(weatherModel);
         presenter.attachView(this);
-        presenter.viewIsReady();
+        if (cityNameQuery == null) {
+            loadWeatherFromCurrentLocation();
+        } else {
+            presenter.viewIsReady();
+        }
     }
 
     private void initNavigationListener() {
@@ -117,7 +155,7 @@ public class NavigationActivity extends BaseActivity
     }
 
     private String loadCityNameFromPref() {
-        return getPreferences(MODE_PRIVATE).getString(CITY_NAME, "Москва");
+        return getPreferences(MODE_PRIVATE).getString(CITY_NAME, null);
     }
 
     public void showHistory(List<HistoryInfoViewModel> historyInfoViewModelList) {
@@ -150,29 +188,6 @@ public class NavigationActivity extends BaseActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                cityNameQuery = query;
-                presenter.loadWeather();
-                searchView.onActionViewCollapsed();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return true;
-            }
-        });
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
@@ -194,16 +209,9 @@ public class NavigationActivity extends BaseActivity
                 presenter.loadWeather();
         }
 
-        if (id != R.id.menu_nav__i_home) {
-            searchView.setVisibility(View.GONE);
-        } else {
-            searchView.setVisibility(View.VISIBLE);
-        }
-
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -217,8 +225,6 @@ public class NavigationActivity extends BaseActivity
             drawer.closeDrawer(GravityCompat.START);
         } else if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
             finish();
-        } else if (!searchView.isIconified()) {
-            searchView.onActionViewCollapsed();
         } else {
             super.onBackPressed();
         }
@@ -230,7 +236,7 @@ public class NavigationActivity extends BaseActivity
         recreate();
     }
 
-    public void showObjectNotFoundDialog(){
+    public void showObjectNotFoundDialog() {
         ObjectNotFoundDialogFragment objectNotFound = new ObjectNotFoundDialogFragment();
         objectNotFound.show(getSupportFragmentManager(), "objectNotFoundDialog");
     }
@@ -243,5 +249,86 @@ public class NavigationActivity extends BaseActivity
 
     public String getCityNameQuery() {
         return cityNameQuery;
+    }
+
+    @Override
+    public void onSearchItemSelected(String cityNameQuery) {
+        this.cityNameQuery = cityNameQuery;
+        presenter.loadWeather();
+    }
+
+    @Override
+    public void onCurrentLocationItemSelected() {
+        loadWeatherFromCurrentLocation();
+    }
+
+    private void loadWeatherFromCurrentLocation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+        } else {
+            if (locationListener == null) {
+                locationListener = new LocListener();
+            }
+
+            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    10000L, 10000F, locationListener);
+
+            Location loc;
+
+            loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (loc == null) {
+                loc = locManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            } else if (loc == null) {
+                try {
+                    loc = Objects.requireNonNull(locManager)
+                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (loc != null) {
+                currentLocation = loc;
+                presenter.loadWeatherFromLocation();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == 100) {
+            boolean permissionsGranted = true;
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    permissionsGranted = false;
+                    break;
+                }
+            }
+            if (permissionsGranted) {
+                recreate();
+            } else {
+                finishAndRemoveTask();
+            }
+        }
+    }
+
+    public Location getLocation() {
+        return currentLocation;
+    }
+
+    private final class LocListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            currentLocation = location;
+        }
     }
 }
