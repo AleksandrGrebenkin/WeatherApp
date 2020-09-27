@@ -4,67 +4,104 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Application;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Address;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
+import com.github.alexandrgrebenkin.weatherapp.ui.WeatherModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.WeatherPresenter;
+import com.github.alexandrgrebenkin.weatherapp.ui.fragment.HistoryFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.ObjectNotFoundDialogFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.UnknownErrorDialogFragment;
-import com.github.alexandrgrebenkin.weatherapp.ui.loader.AddressLoader;
-import com.github.alexandrgrebenkin.weatherapp.ui.event.AddressLoaderEvent;
 import com.github.alexandrgrebenkin.weatherapp.R;
-import com.github.alexandrgrebenkin.weatherapp.ui.event.UnknownExceptionEvent;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.AboutDevFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.FeedbackFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.HomeFragment;
 import com.github.alexandrgrebenkin.weatherapp.ui.fragment.SettingsFragment;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.HistoryInfoViewModel;
+import com.github.alexandrgrebenkin.weatherapp.ui.viewmodel.WeatherViewModel;
 import com.google.android.material.navigation.NavigationView;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class NavigationActivity extends BaseActivity
-        implements SettingsFragment.Listener,
+        implements HomeFragment.OnMenuItemSelectedListener,
+        SettingsFragment.Listener,
         NavigationView.OnNavigationItemSelectedListener {
+
+    public static final String CITY_NAME_QUERY = "com.github.alexandrgrebenkin.weatherapp.CITY_NAME_QUERY";
+
+    private final String CITY_NAME = "CITY_NAME";
 
     private DrawerLayout drawer;
 
-    private SearchView searchView;
+    private WeatherPresenter presenter;
 
-    private Address address;
+    private String cityNameQuery;
+    private Location currentLocation;
+    private LocListener locationListener;
+    private LocationManager locManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
-        EventBus.getDefault().register(this);
-
         Toolbar toolbar = initToolbar();
         initDrawer(toolbar);
         initNavigationListener();
 
+        locManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         if (savedInstanceState == null) {
-            getDefaultAddress();
+            cityNameQuery = loadCityNameFromPref();
         } else {
-            address = savedInstanceState.getParcelable(HomeFragment.ADDRESS);
-            setHomeFragment();
+            cityNameQuery = savedInstanceState.getString(CITY_NAME_QUERY);
+        }
+        setWeatherPresenter();
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (locationListener == null) {
+            locationListener = new LocListener();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (locationListener != null) {
+            locManager.removeUpdates(locationListener);
         }
 
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        presenter.detachView();
     }
 
     private void initDrawer(Toolbar toolbar) {
@@ -86,16 +123,46 @@ public class NavigationActivity extends BaseActivity
         return toolbar;
     }
 
+    private void setWeatherPresenter() {
+        WeatherModel weatherModel = new WeatherModel(this);
+        presenter = new WeatherPresenter(weatherModel);
+        presenter.attachView(this);
+        if (cityNameQuery == null) {
+            loadWeatherFromCurrentLocation();
+        } else {
+            presenter.viewIsReady();
+        }
+    }
+
     private void initNavigationListener() {
         NavigationView navigationView = findViewById(R.id.activity_navigation__nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void setHomeFragment() {
-        HomeFragment homeFragment = HomeFragment.newInstance(address);
+    public void showWeather(WeatherViewModel weatherViewModel) {
+        getSupportActionBar().setTitle(weatherViewModel.getCurrentWeatherViewModel().getCityName());
+        HomeFragment homeFragment = HomeFragment.newInstance(weatherViewModel);
         setFragment(homeFragment);
+        saveCityNameToPref(weatherViewModel.getCurrentWeatherViewModel().getCityName());
 
-        getSupportActionBar().setTitle(address.getLocality());
+    }
+
+    private void saveCityNameToPref(String cityName) {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        sharedPreferences.edit()
+                .putString(CITY_NAME, cityName)
+                .commit();
+    }
+
+    private String loadCityNameFromPref() {
+        return getPreferences(MODE_PRIVATE).getString(CITY_NAME, null);
+    }
+
+    public void showHistory(List<HistoryInfoViewModel> historyInfoViewModelList) {
+        getSupportActionBar().setTitle(getResources().getString(R.string.history));
+        HistoryFragment historyFragment = HistoryFragment
+                .newInstance((ArrayList<HistoryInfoViewModel>) historyInfoViewModelList);
+        setFragment(historyFragment);
     }
 
     private void setSettingsFragment() {
@@ -121,33 +188,14 @@ public class NavigationActivity extends BaseActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                loadAddress(query);
-                searchView.onActionViewCollapsed();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return true;
-            }
-        });
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.menu_nav__i_history:
+                presenter.loadHistory();
+                break;
             case R.id.menu_nav__i_settings:
                 setSettingsFragment();
                 break;
@@ -158,24 +206,17 @@ public class NavigationActivity extends BaseActivity
                 setAboutDevFragment();
                 break;
             default:
-                setHomeFragment();
-        }
-
-        if (id != R.id.menu_nav__i_home) {
-            searchView.setVisibility(View.GONE);
-        } else {
-            searchView.setVisibility(View.VISIBLE);
+                presenter.loadWeather();
         }
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(HomeFragment.ADDRESS, address);
+        outState.putString(CITY_NAME_QUERY, cityNameQuery);
     }
 
     @Override
@@ -184,8 +225,6 @@ public class NavigationActivity extends BaseActivity
             drawer.closeDrawer(GravityCompat.START);
         } else if (getSupportFragmentManager().getBackStackEntryCount() <= 1) {
             finish();
-        } else if (!searchView.isIconified()) {
-            searchView.onActionViewCollapsed();
         } else {
             super.onBackPressed();
         }
@@ -197,30 +236,99 @@ public class NavigationActivity extends BaseActivity
         recreate();
     }
 
-    private void getDefaultAddress() {
-        loadAddress("Москва");
+    public void showObjectNotFoundDialog() {
+        ObjectNotFoundDialogFragment objectNotFound = new ObjectNotFoundDialogFragment();
+        objectNotFound.show(getSupportFragmentManager(), "objectNotFoundDialog");
     }
 
-    private void loadAddress(String query) {
-        AddressLoader addressLoader = new AddressLoader();
-        addressLoader.loadAddress(NavigationActivity.this, query);
+    public void showUnknownErrorDialog(String msg) {
+        UnknownErrorDialogFragment unknownError = UnknownErrorDialogFragment
+                .newInstance(msg);
+        unknownError.show(getSupportFragmentManager(), "unknownErrorDialog");
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void handleEvent(AddressLoaderEvent event) {
-        if (event.getAddress() == null || event.getAddress().getLocality() == null) {
-            ObjectNotFoundDialogFragment objectNotFound = new ObjectNotFoundDialogFragment();
-            objectNotFound.show(getSupportFragmentManager(), "objectNotFoundDialog");
+    public String getCityNameQuery() {
+        return cityNameQuery;
+    }
+
+    @Override
+    public void onSearchItemSelected(String cityNameQuery) {
+        this.cityNameQuery = cityNameQuery;
+        presenter.loadWeather();
+    }
+
+    @Override
+    public void onCurrentLocationItemSelected() {
+        loadWeatherFromCurrentLocation();
+    }
+
+    private void loadWeatherFromCurrentLocation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
         } else {
-            address = event.getAddress();
-            setHomeFragment();
+            if (locationListener == null) {
+                locationListener = new LocListener();
+            }
+
+            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    10000L, 10000F, locationListener);
+
+            Location loc;
+
+            loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (loc == null) {
+                loc = locManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            } else if (loc == null) {
+                try {
+                    loc = Objects.requireNonNull(locManager)
+                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (loc != null) {
+                currentLocation = loc;
+                presenter.loadWeatherFromLocation();
+            }
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void handleEvent(UnknownExceptionEvent event) {
-        UnknownErrorDialogFragment unknownError = UnknownErrorDialogFragment
-                .newInstance(event.getException().getMessage());
-        unknownError.show(getSupportFragmentManager(), "unknownErrorDialog");
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == 100) {
+            boolean permissionsGranted = true;
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    permissionsGranted = false;
+                    break;
+                }
+            }
+            if (permissionsGranted) {
+                recreate();
+            } else {
+                finishAndRemoveTask();
+            }
+        }
+    }
+
+    public Location getLocation() {
+        return currentLocation;
+    }
+
+    private final class LocListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            currentLocation = location;
+        }
     }
 }

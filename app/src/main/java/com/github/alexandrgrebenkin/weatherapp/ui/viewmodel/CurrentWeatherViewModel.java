@@ -1,57 +1,15 @@
 package com.github.alexandrgrebenkin.weatherapp.ui.viewmodel;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CurrentWeatherViewModel implements Parcelable {
     private String cityName;
     private String temperature;
     private String windSpeed;
     private String pressure;
-
-    public CurrentWeatherViewModel(){
-    }
-
-    protected CurrentWeatherViewModel(Parcel in) {
-        List<String> data = new ArrayList<>();
-        in.readStringList(data);
-        cityName = data.get(0);
-        temperature = data.get(1);
-        windSpeed = data.get(2);
-        pressure = data.get(3);
-    }
-
-    public static final Parcelable.Creator<CurrentWeatherViewModel> CREATOR
-            = new Parcelable.Creator<CurrentWeatherViewModel>() {
-        @Override
-        public CurrentWeatherViewModel createFromParcel(Parcel in) {
-            return new CurrentWeatherViewModel(in);
-        }
-
-        @Override
-        public CurrentWeatherViewModel[] newArray(int size) {
-            return new CurrentWeatherViewModel[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        List<String> data = new ArrayList<>();
-        data.add(cityName);
-        data.add(temperature);
-        data.add(windSpeed);
-        data.add(pressure);
-
-        dest.writeStringList(data);
-    }
+    private Uri imageUri;
 
     public String getCityName() {
         return cityName;
@@ -69,6 +27,10 @@ public class CurrentWeatherViewModel implements Parcelable {
         return pressure;
     }
 
+    public Uri getImageUri() {
+        return imageUri;
+    }
+
     public void setCityName(String cityName) {
         this.cityName = cityName;
     }
@@ -84,4 +46,46 @@ public class CurrentWeatherViewModel implements Parcelable {
     public void setPressure(String pressure) {
         this.pressure = pressure;
     }
+
+    public void setImageUri(Uri imageUri) {
+        this.imageUri = imageUri;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.cityName);
+        dest.writeString(this.temperature);
+        dest.writeString(this.windSpeed);
+        dest.writeString(this.pressure);
+        dest.writeParcelable(this.imageUri, flags);
+    }
+
+    public CurrentWeatherViewModel() {
+    }
+
+    protected CurrentWeatherViewModel(Parcel in) {
+        this.cityName = in.readString();
+        this.temperature = in.readString();
+        this.windSpeed = in.readString();
+        this.pressure = in.readString();
+        this.imageUri = in.readParcelable(Uri.class.getClassLoader());
+    }
+
+    public static final Creator<CurrentWeatherViewModel> CREATOR = new Creator<CurrentWeatherViewModel>() {
+        @Override
+        public CurrentWeatherViewModel createFromParcel(Parcel source) {
+            return new CurrentWeatherViewModel(source);
+        }
+
+        @Override
+        public CurrentWeatherViewModel[] newArray(int size) {
+            return new CurrentWeatherViewModel[size];
+        }
+    };
 }

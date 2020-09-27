@@ -2,19 +2,17 @@ package com.github.alexandrgrebenkin.weatherapp.data.manager;
 
 import android.location.Address;
 
+
 import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherProvider;
-import com.github.alexandrgrebenkin.weatherapp.data.webservice.weatherunlocked.InternetWeatherProvider;
-import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
-import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.rest.openweathermap.OpenWeatherProvider;
+import com.github.alexandrgrebenkin.weatherapp.data.rest.weatherunlocked.WeatherUnlockedProvider;
 
 public class WeatherDataManager {
-    private WeatherProvider weatherProvider = new InternetWeatherProvider();
+    private WeatherProvider weatherProvider = new OpenWeatherProvider();
 
-    public CurrentWeather getCurrentWeather(Address address){
-        return weatherProvider.getCurrentWeather(address);
+    public void loadWeatherInfo(Address address, WeatherProvider.WeatherInfoListener weatherInfoListener) {
+        weatherProvider.loadWeatherInfo(address, weatherInfoListener);
     }
 
-    public ForecastWeather getForecastWeather(Address address) {
-        return weatherProvider.getForecastWeather(address);
-    }
+
 }

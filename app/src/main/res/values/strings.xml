@@ -41,5 +41,10 @@
     <string name="not_found_error_title">Object not found</string>
     <string name="not_found_error">Search object not found</string>
     <string name="unknown_error">Unknown error!</string>
+    <string name="history">History</string>
+
+    <string name="network_connection_notification">Network connection notification</string>
+    <string name="wifi_connection_disabled">Wi-Fi connection disabled</string>
+    <string name="my_location">My location</string>
 
 </resources>

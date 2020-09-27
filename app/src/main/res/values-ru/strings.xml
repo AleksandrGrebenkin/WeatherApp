@@ -40,4 +40,9 @@
     <string name="not_found_error_title">Объект не найден</string>
     <string name="not_found_error">Указанный объект не найден</string>
     <string name="unknown_error">Неизвестная ошибка!</string>
+    <string name="history">История</string>
+
+    <string name="network_connection_notification">Уведомление о сетевом подключении</string>
+    <string name="wifi_connection_disabled">Wi-Fi подключение отсутствует</string>
+    <string name="my_location">Мое местоположение</string>
 </resources>

@@ -1,13 +1,16 @@
-package com.github.alexandrgrebenkin.weatherapp.data.webservice.weatherunlocked;
+package com.github.alexandrgrebenkin.weatherapp.data.rest.weatherunlocked;
 
 import android.location.Address;
 import android.util.Log;
 
 import com.github.alexandrgrebenkin.weatherapp.BuildConfig;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherCondition;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
 import com.github.alexandrgrebenkin.weatherapp.data.provider.WeatherProvider;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.DayWeather;
 import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.rest.openweathermap.entities.WeatherRestModel;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -22,7 +25,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InternetWeatherProvider implements WeatherProvider {
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
+public class WeatherUnlockedProvider implements WeatherProvider {
     private static final String TAG = "WEATHER_APP";
     private static final String WEATHER_URL =
             "http://api.weatherunlocked.com/api/{TYPE}/{LAT},{LON}?app_id={APP_ID}&app_key={APP_KEY}"
@@ -30,18 +37,34 @@ public class InternetWeatherProvider implements WeatherProvider {
                     .replace("{APP_KEY}", BuildConfig.WEATHER_APP_KEY);
 
     @Override
-    public CurrentWeather getCurrentWeather(Address address) {
+    public void loadWeatherInfo(Address address, WeatherInfoListener weatherInfoListener) {
+        getWeatherInfo(address).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(weatherInfo -> {
+                    weatherInfoListener.onLoad(weatherInfo);
+                });
+    }
+
+    private Observable<WeatherInfo> getWeatherInfo(Address address) {
+        return Observable.create(emitter -> {
+            WeatherInfo weatherInfo = new WeatherInfo(getCurrentWeather(address),
+                    getForecastWeather(address));
+            emitter.onNext(weatherInfo);
+        });
+    }
+
+    private CurrentWeather getCurrentWeather(Address address) {
         CurrentWeatherRequest request = getCurrentWeatherRequest(address);
         CurrentWeather currentWeather = new CurrentWeather();
         currentWeather.setCityName(address.getLocality());
         currentWeather.setTempCelsius(request.getTempC());
         currentWeather.setWindSpeedMS(request.getWindSpeedMS());
         currentWeather.setPressureMm(request.getPressureInches() * 25.4f);
+        currentWeather.setWeatherCondition(getWeatherCondition(request.getWeatherCode()));
         return currentWeather;
     }
 
-    @Override
-    public ForecastWeather getForecastWeather(Address address) {
+    private ForecastWeather getForecastWeather(Address address) {
         ForecastWeatherRequest forecastRequest = getForecastWeatherRequest(address);
         ForecastWeather forecastWeather = new ForecastWeather();
         forecastWeather.setDayWeatherList(getDayWeatherList(forecastRequest.getDays()));
@@ -116,7 +139,7 @@ public class InternetWeatherProvider implements WeatherProvider {
         return currentWeatherRequest;
     }
 
-    private List<DayWeather> getDayWeatherList (List<DayWeatherRequest> dayWeatherRequestList) {
+    private List<DayWeather> getDayWeatherList(List<DayWeatherRequest> dayWeatherRequestList) {
         List<DayWeather> dayWeatherList = new ArrayList<>();
         for (int i = 0; i < dayWeatherRequestList.size(); i++) {
             DayWeatherRequest dayRequest = dayWeatherRequestList.get(i);
@@ -134,17 +157,42 @@ public class InternetWeatherProvider implements WeatherProvider {
         return dayWeatherList;
     }
 
-    private String getLines(BufferedReader in) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            String line = null;
-            while ((line = in.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    private WeatherCondition getWeatherCondition(float weatherCode) {
+        int weatherId = (int) weatherCode;
+        if (weatherId == 0) {
+            return WeatherCondition.CLEAR;
+        } else if (weatherId >= 1 && weatherId <= 3) {
+            return WeatherCondition.CLOUDS;
+        } else if (weatherId >= 10 && weatherId <= 49) {
+            return WeatherCondition.FOG;
+        } else if (weatherId >= 50 && weatherId <= 57) {
+            return WeatherCondition.DRIZZLE;
+        } else if (weatherId >= 60 && weatherId <= 67) {
+            return WeatherCondition.RAIN;
+        } else if (weatherId >= 68 && weatherId <= 79) {
+            return WeatherCondition.SNOW;
+        } else if (weatherId >= 80 && weatherId <= 82) {
+            return WeatherCondition.RAIN;
+        } else if (weatherId >= 83 && weatherId <= 88) {
+            return WeatherCondition.SNOW;
+        } else if (weatherId >= 91 && weatherId <= 94) {
+            return WeatherCondition.THUNDERSTORM;
+        } else {
+            return WeatherCondition.UNKNOWN;
         }
-
-        return sb.toString();
     }
-}
+
+        private String getLines (BufferedReader in){
+            StringBuilder sb = new StringBuilder();
+            try {
+                String line = null;
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return sb.toString();
+        }
+    }

@@ -7,6 +7,11 @@
             android:title="@string/weather" />
 
         <item
+            android:id="@+id/menu_nav__i_history"
+            android:icon="@drawable/ic_baseline_history_24"
+            android:title="@string/history" />
+
+        <item
             android:id="@+id/menu_nav__i_settings"
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/settings" />

@@ -2,11 +2,12 @@ package com.github.alexandrgrebenkin.weatherapp.data.provider;
 
 import android.location.Address;
 
-import com.github.alexandrgrebenkin.weatherapp.data.entity.CurrentWeather;
-import com.github.alexandrgrebenkin.weatherapp.data.entity.ForecastWeather;
+import com.github.alexandrgrebenkin.weatherapp.data.entity.WeatherInfo;
 
 public interface WeatherProvider {
-    CurrentWeather getCurrentWeather(Address address);
+    void loadWeatherInfo(Address address, WeatherInfoListener weatherInfoListener);
 
-    ForecastWeather getForecastWeather(Address address);
+    interface WeatherInfoListener {
+        void onLoad(WeatherInfo weatherInfo);
+    }
 }
