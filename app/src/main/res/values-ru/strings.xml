@@ -45,4 +45,6 @@
     <string name="network_connection_notification">Уведомление о сетевом подключении</string>
     <string name="wifi_connection_disabled">Wi-Fi подключение отсутствует</string>
     <string name="my_location">Мое местоположение</string>
+
+    <string name="authentication">Аутентификация</string>
 </resources>

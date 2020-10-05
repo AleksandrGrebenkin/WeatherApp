@@ -25,7 +25,12 @@
             android:id="@+id/menu_nav__i_about"
             android:icon="@drawable/ic_baseline_people_alt_24"
             android:title="@string/about_developer" />
-
     </group>
+
+    <item
+        android:id="@+id/menu_nav__i_auth"
+        android:icon="@drawable/ic_baseline_account_box_24"
+        android:title="@string/authentication" />
+
 
 </menu>

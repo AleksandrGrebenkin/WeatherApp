@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -57,9 +58,6 @@ public class NavigationActivity extends BaseActivity
     private WeatherPresenter presenter;
 
     private String cityNameQuery;
-    private Location currentLocation;
-    private LocListener locationListener;
-    private LocationManager locManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +68,6 @@ public class NavigationActivity extends BaseActivity
         initDrawer(toolbar);
         initNavigationListener();
 
-        locManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
         if (savedInstanceState == null) {
             cityNameQuery = loadCityNameFromPref();
         } else {
@@ -80,23 +76,6 @@ public class NavigationActivity extends BaseActivity
         setWeatherPresenter();
     }
 
-    @SuppressLint("MissingPermission")
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (locationListener == null) {
-            locationListener = new LocListener();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        if (locationListener != null) {
-            locManager.removeUpdates(locationListener);
-        }
-
-        super.onPause();
-    }
 
     @Override
     protected void onDestroy() {
@@ -128,10 +107,10 @@ public class NavigationActivity extends BaseActivity
         presenter = new WeatherPresenter(weatherModel);
         presenter.attachView(this);
         if (cityNameQuery == null) {
-            loadWeatherFromCurrentLocation();
-        } else {
-            presenter.viewIsReady();
+            cityNameQuery = "Москва";
         }
+        presenter.viewIsReady();
+
     }
 
     private void initNavigationListener() {
@@ -151,7 +130,7 @@ public class NavigationActivity extends BaseActivity
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         sharedPreferences.edit()
                 .putString(CITY_NAME, cityName)
-                .commit();
+                .apply();
     }
 
     private String loadCityNameFromPref() {
@@ -205,6 +184,8 @@ public class NavigationActivity extends BaseActivity
             case R.id.menu_nav__i_about:
                 setAboutDevFragment();
                 break;
+            case R.id.menu_nav__i_auth:
+                startActivity(new Intent(this, AuthActivity.class));
             default:
                 presenter.loadWeather();
         }
@@ -259,76 +240,12 @@ public class NavigationActivity extends BaseActivity
 
     @Override
     public void onCurrentLocationItemSelected() {
-        loadWeatherFromCurrentLocation();
     }
 
-    private void loadWeatherFromCurrentLocation() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
-        } else {
-            if (locationListener == null) {
-                locationListener = new LocListener();
-            }
-
-            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    10000L, 10000F, locationListener);
-
-            Location loc;
-
-            loc = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (loc == null) {
-                loc = locManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            } else if (loc == null) {
-                try {
-                    loc = Objects.requireNonNull(locManager)
-                            .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (loc != null) {
-                currentLocation = loc;
-                presenter.loadWeatherFromLocation();
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == 100) {
-            boolean permissionsGranted = true;
-            for (int grantResult : grantResults) {
-                if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                    permissionsGranted = false;
-                    break;
-                }
-            }
-            if (permissionsGranted) {
-                recreate();
-            } else {
-                finishAndRemoveTask();
-            }
-        }
-    }
 
     public Location getLocation() {
-        return currentLocation;
+        return null;
     }
 
-    private final class LocListener implements LocationListener {
 
-        @Override
-        public void onLocationChanged(@NonNull Location location) {
-            currentLocation = location;
-        }
-    }
 }
