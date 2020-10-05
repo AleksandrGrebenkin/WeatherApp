@@ -47,4 +47,6 @@
     <string name="wifi_connection_disabled">Wi-Fi connection disabled</string>
     <string name="my_location">My location</string>
 
+    <string name="authentication">Authentication</string>
+
 </resources>

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -129,7 +130,7 @@ public class NavigationActivity extends BaseActivity
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         sharedPreferences.edit()
                 .putString(CITY_NAME, cityName)
-                .commit();
+                .apply();
     }
 
     private String loadCityNameFromPref() {
@@ -183,6 +184,8 @@ public class NavigationActivity extends BaseActivity
             case R.id.menu_nav__i_about:
                 setAboutDevFragment();
                 break;
+            case R.id.menu_nav__i_auth:
+                startActivity(new Intent(this, AuthActivity.class));
             default:
                 presenter.loadWeather();
         }

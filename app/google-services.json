@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "661889507969",
-    "firebase_url": "https://weather-app-f83a9.firebaseio.com",
-    "project_id": "weather-app-f83a9",
-    "storage_bucket": "weather-app-f83a9.appspot.com"
+    "project_number": "133485639209",
+    "firebase_url": "https://weatherappdebug-1601880476684.firebaseio.com",
+    "project_id": "weatherappdebug-1601880476684",
+    "storage_bucket": "weatherappdebug-1601880476684.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:661889507969:android:95b4c09402a85b2b5be380",
+        "mobilesdk_app_id": "1:133485639209:android:29bef4ebc24dad0b88ce38",
         "android_client_info": {
           "package_name": "com.github.alexandrgrebenkin.weatherapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "661889507969-1old7f4d533i941jism960dnba7rn8on.apps.googleusercontent.com",
+          "client_id": "133485639209-7vdl5if0dfveieh9td9k3jkjc3ces0nk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.alexandrgrebenkin.weatherapp",
+            "certificate_hash": "9f6120b0890ad1c91e3ec318d2b1c0514cf62543"
+          }
+        },
+        {
+          "client_id": "133485639209-rtticmhujqkfis1irn48jp2crl5tqnf5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCjKdFWmlmAhrY8iZrqRXroOQraXOfJWvM"
+          "current_key": "AIzaSyDi5jIsIq1XfIn75_2u6zQL845h050AI6M"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "661889507969-1old7f4d533i941jism960dnba7rn8on.apps.googleusercontent.com",
+              "client_id": "133485639209-rtticmhujqkfis1irn48jp2crl5tqnf5.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

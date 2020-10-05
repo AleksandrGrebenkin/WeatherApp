@@ -41,13 +41,9 @@ android {
     productFlavors {
         withoutGeo {
             dimension 'version'
-            versionNameSuffix '.withoutGeo'
-            applicationIdSuffix = '.withoutGeo'
         }
         withGeo {
             dimension 'version'
-            versionNameSuffix '.withGeo'
-            applicationIdSuffix = '.withGeo'
         }
     }
 
@@ -59,7 +55,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
 
     //RxJava 3
     def rx_java_version = "3.0.0"
